@@ -1,1 +1,1 @@
-Link tema 1 din proiect: [https://docs.google.com/document/d/1OaZdsQGP5AMF0XkbK7tA2RnIFju_OMlXonZhfy2JQzg/edit?tab=t.0#heading=h.bcldxwdefncd](https://docs.google.com/document/d/1OaZdsQGP5AMF0XkbK7tA2RnIFju_OMlXonZhfy2JQzg/edit?usp=sharing)
+Team members: Iov Alexandru Constantin, Spilevoi Bogdan-Vasile, Lucanu Sebastian
