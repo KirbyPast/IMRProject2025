@@ -6,7 +6,7 @@ using UnityEngine;
 public class Cpu : PcComponent
 {
 
-    public Cpu(string Name, string Description, float Price, string Manufacturer, string Model, List<Spec> specs) : base(Name, Description, Manufacturer, Model, Price, specs)
+    public Cpu(string Id, string Name, string Description, float Price, string Manufacturer, string Model, List<Spec> specs) : base(Id, Name, Description, Manufacturer, Model, Price, specs)
     {
 
     }

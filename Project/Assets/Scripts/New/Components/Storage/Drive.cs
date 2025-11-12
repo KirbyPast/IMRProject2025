@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class Drive : PcComponent
 {
-    public Drive(string Name, string Description, string Manufacturer, string Model, float Price, List<Spec> Specs) : base(Name, Description, Manufacturer, Model, Price, Specs)
+    public Drive(string Id, string Name, string Description, string Manufacturer, string Model, float Price, List<Spec> Specs) : base(Id, Name, Description, Manufacturer, Model, Price, Specs)
     {
     }
 }
