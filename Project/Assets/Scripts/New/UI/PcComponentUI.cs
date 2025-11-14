@@ -6,7 +6,7 @@ using TMPro;
 
 public class PcComponentUI : MonoBehaviour
 {
-    private PcComponent thisComponent;
+    public PcComponent thisComponent;
     public TMP_Text T_Name, T_Description, T_Price;
     public Button B_View, B_Buy;
 
@@ -16,7 +16,7 @@ public class PcComponentUI : MonoBehaviour
         T_Name.text = component.Name;
         T_Description.text = component.Description;
         T_Price.text = component.Price.ToString();
-        B_Buy.onClick.AddListener(() => s.BuyComponent(this, thisComponent));
+        B_Buy.onClick.AddListener(() => { s.BuyComponent(this, thisComponent); }); 
         
     }
 }

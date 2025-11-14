@@ -11,20 +11,20 @@ public class Storage : MonoBehaviour
         Components.Clear();
         print("Generating components");
         // ===== CPUs =====
-        Components.Add(new Cpu(
-            Id: "0",
-            Name: "Ryzen 7 7800X3D",
-            Description: "8-core/16-thread AM5 gaming CPU with 3D V-Cache; excels in latency-sensitive titles.",
-            Price: 399.99f,
-            Manufacturer: "AMD",
-            Model: "7800X3D",
-            specs: new List<Spec> {
-                new Spec("Cores/Threads", "8/16"),
-                new Spec("Base/Boost", "4.2 / 5.0 GHz"),
-                new Spec("Socket", "AM5"),
-                new Spec("TDP", "120W")
-            }
-        ));
+        //Components.Add(new Cpu(
+        //    Id: "0",
+        //    Name: "Ryzen 7 7800X3D",
+        //    Description: "8-core/16-thread AM5 gaming CPU with 3D V-Cache; excels in latency-sensitive titles.",
+        //    Price: 399.99f,
+        //    Manufacturer: "AMD",
+        //    Model: "7800X3D",
+        //    specs: new List<Spec> {
+        //        new Spec("Cores/Threads", "8/16"),
+        //        new Spec("Base/Boost", "4.2 / 5.0 GHz"),
+        //        new Spec("Socket", "AM5"),
+        //        new Spec("TDP", "120W")
+        //    }
+        //));
 
         Components.Add(new Cpu(
             Id: "1",
@@ -41,24 +41,39 @@ public class Storage : MonoBehaviour
             }
         ));
 
-        // ===== GPUs =====
-        Components.Add(new Gpu(
+        Components.Add(new MotherBoard(
             Id: "2",
-            Name: "GeForce RTX 4070",
-            Description: "1440p-focused GPU with strong efficiency and DLSS 3 frame generation.",
-            Price: 549.99f,
-            Manufacturer: "NVIDIA",
-            Maker: "NVIDIA",
-            Model: "RTX 4070",
+            Name: "MAG Z790 TOMAHAWK",
+            Description: "LGA1700 ATX with strong I/O and PCIe 5.0 x16 for 12th–14th Gen Intel CPUs.",
+            Manufacturer: "MSI",
+            Model: "Z790 TOMAHAWK",
+            Price: 289.99f,
             Specs: new List<Spec> {
-                new Spec("VRAM", "12 GB GDDR6X"),
-                new Spec("Boost Clock", "2.48 GHz"),
-                new Spec("TBP", "200W"),
-                new Spec("Outputs", "HDMI 2.1, 3x DP 1.4a")
+                new Spec("Socket", "LGA1700"),
+                new Spec("Form Factor", "ATX"),
+                new Spec("Memory", "DDR5"),
+                new Spec("PCIe", "Gen 5 x16")
             }
         ));
 
-        Components.Add(new Gpu(
+        Components.Add(new Ram(
+            Id: "3",
+            Name: "Trident Z5 64GB (2x32) DDR5-6400",
+            Description: "High-capacity, high-speed kit for heavy creative workloads and gaming.",
+            Manufacturer: "G.SKILL",
+            Model: "F5-6400J3239G32GX2-TZ5K",
+            Price: 219.99f,
+            Specs: new List<Spec> {
+                new Spec("Capacity", "64 GB"),
+                new Spec("Speed", "DDR5-6400"),
+                new Spec("CAS", "CL32"),
+                new Spec("Voltage", "1.40V")
+            }
+        ));
+
+        // ===== GPUs =====
+
+        /*Components.Add(new Gpu(
             Id: "3",
             Name: "Radeon RX 7800 XT",
             Description: "High-value 1440p/entry-4K GPU with modern AV1 encode and DisplayPort 2.1.",
@@ -239,8 +254,8 @@ public class Storage : MonoBehaviour
             Price: 139.99f,
             Specs: new List<Spec> {
                 new Spec("case", "case"),
-            }
-        ));
+            
+        ));}*/
     }
 
     [SerializeField]
