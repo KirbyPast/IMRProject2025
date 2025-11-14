@@ -9,9 +9,10 @@ public class Storage : MonoBehaviour
     public void Populate()
     {
         Components.Clear();
-
+        print("Generating components");
         // ===== CPUs =====
         Components.Add(new Cpu(
+            Id: "0",
             Name: "Ryzen 7 7800X3D",
             Description: "8-core/16-thread AM5 gaming CPU with 3D V-Cache; excels in latency-sensitive titles.",
             Price: 399.99f,
@@ -26,6 +27,7 @@ public class Storage : MonoBehaviour
         ));
 
         Components.Add(new Cpu(
+            Id: "1",
             Name: "Core i7-13700K",
             Description: "Hybrid desktop CPU (8P+8E) for high-FPS gaming and heavy multitasking.",
             Price: 379.99f,
@@ -41,6 +43,7 @@ public class Storage : MonoBehaviour
 
         // ===== GPUs =====
         Components.Add(new Gpu(
+            Id: "2",
             Name: "GeForce RTX 4070",
             Description: "1440p-focused GPU with strong efficiency and DLSS 3 frame generation.",
             Price: 549.99f,
@@ -56,6 +59,7 @@ public class Storage : MonoBehaviour
         ));
 
         Components.Add(new Gpu(
+            Id: "3",
             Name: "Radeon RX 7800 XT",
             Description: "High-value 1440p/entry-4K GPU with modern AV1 encode and DisplayPort 2.1.",
             Price: 499.99f,
@@ -72,6 +76,7 @@ public class Storage : MonoBehaviour
 
         // ===== Motherboards =====
         Components.Add(new MotherBoard(
+            Id: "4",
             Name: "ROG STRIX B650E-F",
             Description: "AM5 ATX board with PCIe 5.0 support and robust VRMs for Ryzen 7000/8000.",
             Manufacturer: "ASUS",
@@ -86,6 +91,7 @@ public class Storage : MonoBehaviour
         ));
 
         Components.Add(new MotherBoard(
+            Id: "5",
             Name: "MAG Z790 TOMAHAWK",
             Description: "LGA1700 ATX with strong I/O and PCIe 5.0 x16 for 12th–14th Gen Intel CPUs.",
             Manufacturer: "MSI",
@@ -101,6 +107,7 @@ public class Storage : MonoBehaviour
 
         // ===== RAM =====
         Components.Add(new Ram(
+            Id: "6",
             Name: "Vengeance 32GB (2x16) DDR5-6000",
             Description: "Balanced DDR5 kit ideal for AM5/Intel platforms; great price-to-perf.",
             Manufacturer: "Corsair",
@@ -115,6 +122,7 @@ public class Storage : MonoBehaviour
         ));
 
         Components.Add(new Ram(
+            Id: "7",
             Name: "Trident Z5 64GB (2x32) DDR5-6400",
             Description: "High-capacity, high-speed kit for heavy creative workloads and gaming.",
             Manufacturer: "G.SKILL",
@@ -130,6 +138,7 @@ public class Storage : MonoBehaviour
 
         // ===== Drives =====
         Components.Add(new Drive(
+            Id: "8",
             Name: "990 PRO 1TB NVMe",
             Description: "PCIe 4.0 M.2 SSD with top-tier sequential speeds and solid endurance.",
             Manufacturer: "Samsung",
@@ -144,6 +153,7 @@ public class Storage : MonoBehaviour
         ));
 
         Components.Add(new Drive(
+            Id: "9",
             Name: "WD Blue 2TB HDD",
             Description: "Reliable mass storage for media libraries, backups, and general use.",
             Manufacturer: "Western Digital",
@@ -159,6 +169,7 @@ public class Storage : MonoBehaviour
 
         // ===== Coolers =====
         Components.Add(new Cooler(
+            Id: "10",
             Name: "NH-D15",
             Description: "Premium dual-tower air cooler known for quiet operation and high thermal headroom.",
             Manufacturer: "Noctua",
@@ -173,6 +184,7 @@ public class Storage : MonoBehaviour
         ));
 
         Components.Add(new Cooler(
+            Id: "11",
             Name: "iCUE H100i Elite",
             Description: "240 mm AIO with RGB and good performance in compact ATX/mATX builds.",
             Manufacturer: "Corsair",
@@ -188,6 +200,7 @@ public class Storage : MonoBehaviour
 
         // ===== PSUs =====
         Components.Add(new Psu(
+            Id: "12",
             Name: "FOCUS GX-750",
             Description: "Quiet, efficient 80+ Gold PSU with full modular cables and ATX 3.0 support.",
             Manufacturer: "Seasonic",
@@ -202,6 +215,7 @@ public class Storage : MonoBehaviour
         ));
 
         Components.Add(new Psu(
+            Id: "13",
             Name: "RM850x",
             Description: "Proven 850W platform suitable for high-end GPUs; fully modular cabling.",
             Manufacturer: "Corsair",
@@ -212,6 +226,19 @@ public class Storage : MonoBehaviour
                 new Spec("Efficiency", "80+ Gold"),
                 new Spec("Modularity", "Fully Modular"),
                 new Spec("ATX", "ATX 3.0 / PCIe 5")
+            }
+        ));
+
+
+        Components.Add(new Case(
+            Id: "14",
+            Name: "case",
+            Description: "case",
+            Manufacturer: "case",
+            Model: "case",
+            Price: 139.99f,
+            Specs: new List<Spec> {
+                new Spec("case", "case"),
             }
         ));
     }

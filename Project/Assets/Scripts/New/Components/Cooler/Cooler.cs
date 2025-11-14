@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class Cooler : PcComponent
 {
-    public Cooler(string Name, string Description, string Manufacturer, string Model, float Price, List<Spec> Specs) : base(Name, Description, Manufacturer, Model, Price, Specs)
+    public Cooler(string Id, string Name, string Description, string Manufacturer, string Model, float Price, List<Spec> Specs) : base(Id, Name, Description, Manufacturer, Model, Price, Specs)
     {
     }
 }
