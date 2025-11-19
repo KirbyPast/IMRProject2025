@@ -1,46 +1,47 @@
 using Pixelplacement;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
 public class PhisicalMotherBoard : PhisicalPcComponent
 {
     public GameObject CpuHighlight;
-    public List<(GameObject, bool)> RamHighlits = new();
+    public List<(GameObject, bool)> RamSlots = new();
     public bool CpuMounted = false;
-
-    //TODO: Add system to keep track of added items and be able to remove them
 
     private void Start()
     {
-        //??Maybe not remove XrGrabInteractible to be able to remove the component later
         Singleton.ItemGrabManager.OnItemDropped += (item) =>
         {
+            print("Figuring if item dropped can be attached");
             if(!CpuMounted && item.GetComponent<PhisicalCpu>() != null && Vector3.Distance(item.transform.position, CpuHighlight.transform.position) < 0.1f)
             {
-                Destroy(item.GetComponent<XRGrabInteractable>());
-
-                Destroy(item.GetComponent<Rigidbody>());
-                item.transform.parent = transform.GetChild(0);
-                Tween.LocalPosition(item.transform, CpuHighlight.transform.localPosition, 0.5f, 0, Tween.EaseInOut);
-                Tween.Rotation(item.transform, CpuHighlight.transform.rotation, 0.5f, 0, Tween.EaseInOut);
-                CpuHighlight.SetActive(false);
-                CpuMounted = true;
+                print("Trying to mount CPU");
+                AttachComponent(item.GetComponent<PhisicalPcComponent>(),
+                            () => { CpuMounted = false; },
+                            () => {
+                                Tween.LocalPosition(item.transform, CpuHighlight.transform.localPosition, 0.5f, 0, Tween.EaseInOut);
+                                Tween.Rotation(item.transform, CpuHighlight.transform.rotation, 0.5f, 0, Tween.EaseInOut);
+                                CpuHighlight.SetActive(false);
+                                CpuMounted = true;
+                            }
+                        );
             }
 
-            if(RamHighlits.Exists(r => !r.Item2))
+            if(RamSlots.Exists(r => !r.Item2))
             {
                 if (item.GetComponent<PhisicalRam>() != null)
                 {
-                    RamHighlits.ForEach(r => r.Item1.SetActive(false));
+                    print("Trying to mount RAM");
+                    RamSlots.ForEach(r => r.Item1.SetActive(false));
 
                     var min = 1f;
                     var closestRam = (GameObject)null;
 
-                    foreach (var (ramHighlight, mounted) in RamHighlits.Where(r => !r.Item2))
+                    foreach (var (ramHighlight, mounted) in RamSlots.Where(r => !r.Item2))
                     {
                         var dist = Vector3.Distance(item.transform.position, ramHighlight.transform.position);
                         ramHighlight.SetActive(false);
@@ -53,13 +54,15 @@ public class PhisicalMotherBoard : PhisicalPcComponent
 
                     if(closestRam != null && min <= 0.1f)
                     {
-                        Destroy(item.GetComponent<XRGrabInteractable>());
-
-                        Destroy(item.GetComponent<Rigidbody>());
-                        item.transform.parent = transform.GetChild(0);
-                        Tween.LocalPosition(item.transform, closestRam.transform.localPosition, 0.5f, 0, Tween.EaseInOut);
-                        Tween.Rotation(item.transform, closestRam.transform.rotation, 0.5f, 0, Tween.EaseInOut);
-                        RamHighlits[RamHighlits.FindIndex(r => r.Item1 == closestRam)] = (closestRam, true);
+                        AttachComponent(item.GetComponent<PhisicalPcComponent>(),
+                            () => { RamSlots[RamSlots.FindIndex(r => r.Item1 == closestRam)] = (closestRam, false); },
+                            () => {
+                                Tween.LocalPosition(item.transform, closestRam.transform.localPosition, 0.5f, 0, Tween.EaseInOut);
+                                Tween.Rotation(item.transform, closestRam.transform.rotation, 0.5f, 0, Tween.EaseInOut);
+                                RamSlots[RamSlots.FindIndex(r => r.Item1 == closestRam)] = (closestRam, true);
+                            }
+                        );
+                        
                     }                   
                 }
             }
@@ -72,20 +75,21 @@ public class PhisicalMotherBoard : PhisicalPcComponent
         {
             if(!CpuMounted)
             {
+                CpuHighlight.SetActive(false);
                 var item = Singleton.ItemGrabManager.CurrentItems.Find(it => it.GetComponent<PhisicalCpu>() != null);
                 if (item != null && Vector3.Distance(item.transform.position, CpuHighlight.transform.position) < 0.1f)
                 {
                     CpuHighlight.SetActive(true);
                 }
             }
-            if (RamHighlits.Exists(r => !r.Item2))
+            if (RamSlots.Exists(r => !r.Item2))
             {
                 var item = Singleton.ItemGrabManager.CurrentItems.Find(it => it.GetComponent<PhisicalRam>() != null);
                 var min = 1f;
                 var closestRam = (GameObject)null;
                 if (item != null)
                 {
-                    foreach (var (ramHighlight, mounted) in RamHighlits.Where(r => !r.Item2))
+                    foreach (var (ramHighlight, mounted) in RamSlots.Where(r => !r.Item2))
                     {
                         var dist = Vector3.Distance(item.transform.position, ramHighlight.transform.position);
                         ramHighlight.SetActive(false);
@@ -112,10 +116,19 @@ public class PhisicalMotherBoard : PhisicalPcComponent
             Debug.LogError("CpuPlaceholder not found in MotherBoard");
         }
 
-        RamHighlits = transform.FindAllDeepChildren("RamHighlight").Select(t => (t.gameObject, false)).ToList();
-        if(RamHighlits.Count == 0)
+        RamSlots = transform.FindAllDeepChildren("RamHighlight").Select(t => (t.gameObject, false)).ToList();
+        if(RamSlots.Count == 0)
         {
             Debug.LogError("RamPlaceholders not found in MotherBoard");
         }
+    }
+
+    public void AttachComponent(PhisicalPcComponent pc, Action OnDeAttach, Action SpecialBeh)
+    {
+        print("Mounting component to this motherboard.");
+        pc.Attach(this);
+        pc.OnDeAttach += () => { OnDeAttach?.Invoke(); };
+        pc.gameObject.transform.SetParent(transform.GetChild(0), true);
+        SpecialBeh?.Invoke();
     }
 }

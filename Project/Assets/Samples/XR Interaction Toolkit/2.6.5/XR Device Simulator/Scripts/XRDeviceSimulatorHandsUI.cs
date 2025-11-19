@@ -87,16 +87,26 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.DeviceSimulator
 
         internal void Initialize(XRDeviceSimulator simulator)
         {
+            //print(simulator.simulatedHandExpressions.Count + " " + m_Expressions.Count);
             for (var index = 0; index < simulator.simulatedHandExpressions.Count; ++index)
             {
                 var simulatedExpression = simulator.simulatedHandExpressions[index];
+                
                 if (index >= m_Expressions.Count)
                 {
                     Debug.LogWarning("The Device Simulator has more expressions than the UI can display.", this);
                 }
                 else
                 {
-                    m_Expressions[index].Initialize(simulatedExpression.toggleAction, simulatedExpression.name, simulatedExpression.icon);
+                    try//bogdan: custom line to avoid error
+                    {
+                        m_Expressions[index].Initialize(simulatedExpression.toggleAction, simulatedExpression.name, simulatedExpression.icon);
+                    }
+                    catch
+                    {
+
+                    }
+                        
                 }
             }
 
