@@ -22,4 +22,14 @@ public class ItemGrabManager : MonoBehaviour
         OnItemDropped?.Invoke(item);
     }
 
+    public bool HasType<T>(out XRGrabInteractable item) where T : Component
+    {
+        item = CurrentItems.Find(it => it.GetComponent<T>() != null);
+        if (item == null)
+        {
+            return false;
+        }
+        return true;
+    }
+
 }

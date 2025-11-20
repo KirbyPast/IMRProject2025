@@ -34,10 +34,10 @@ public class Storage : MonoBehaviour
             Manufacturer: "Intel",
             Model: "i7-13700K",
             specs: new List<Spec> {
-                new Spec("Cores/Threads", "8P+8E / 24"),
-                new Spec("P-Core Base/Boost", "3.4 / 5.4 GHz"),
-                new Spec("Socket", "LGA1700"),
-                new Spec("TDP", "125W")
+                new ("Cores/Threads", "8P+8E / 24"),
+                new ("P-Core Base/Boost", "3.4 / 5.4 GHz"),
+                new ("Socket", "LGA1700"),
+                new ("TDP", "125W")
             }
         ));
 
@@ -49,10 +49,10 @@ public class Storage : MonoBehaviour
             Model: "Z790 TOMAHAWK",
             Price: 289.99f,
             Specs: new List<Spec> {
-                new Spec("Socket", "LGA1700"),
-                new Spec("Form Factor", "ATX"),
-                new Spec("Memory", "DDR5"),
-                new Spec("PCIe", "Gen 5 x16")
+                new ("Socket", "LGA1700"),
+                new ("Form Factor", "ATX"),
+                new ("Memory", "DDR5"),
+                new ("PCIe", "Gen 5 x16")
             }
         ));
 
@@ -64,10 +64,26 @@ public class Storage : MonoBehaviour
             Model: "F5-6400J3239G32GX2-TZ5K",
             Price: 219.99f,
             Specs: new List<Spec> {
-                new Spec("Capacity", "64 GB"),
-                new Spec("Speed", "DDR5-6400"),
-                new Spec("CAS", "CL32"),
-                new Spec("Voltage", "1.40V")
+                new ("Capacity", "64 GB"),
+                new ("Speed", "DDR5-6400"),
+                new ("CAS", "CL32"),
+                new ("Voltage", "1.40V")
+            }
+        ));
+
+        Components.Add(new Gpu(
+            Id: "4",
+            Name: "Nvidia RTX 5090",
+            Description: "High-value 1440p/entry-4K GPU with modern AV1 encode and DisplayPort 2.1.",
+            Price: 499.99f,
+            Manufacturer: "NVidia",
+            Maker: "Nvidia",
+            Model: "RTX 5090",
+            Specs: new List<Spec> {
+                new ("VRAM", "24 GB GDDR6"),
+                new ("Game/Boost", "2.1 / 2.4 GHz"),
+                new ("TBP", "263W"),
+                new ("Outputs", "HDMI 2.1, 3x DP 2.1")
             }
         ));
 

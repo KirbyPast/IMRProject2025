@@ -1,13 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using VHACD.Unity;
 
 [RequireComponent(typeof(XRGrabInteractable), typeof(Rigidbody))]
 public class PhisicalPcComponent : MonoBehaviour
 {
     private PcComponent thisComponent;
+
+    [Header("Base component")] 
     public GameObject mesh;
     public Material material;
     public XRGrabInteractable Interactible;
@@ -16,11 +20,11 @@ public class PhisicalPcComponent : MonoBehaviour
     public bool Attached = false;
     public PhisicalPcComponent AttachedTo;
     public Action OnDeAttach;
-    Transform lastParent;
+
+    public List<Collider> Colliders = new();
 
     public void Create(PcComponent pc)
     {
-        lastParent = transform.parent;
         thisComponent = pc;
 
         var prefab = Resources.Load<GameObject>($"models/{thisComponent.ModelId}");
@@ -52,14 +56,26 @@ public class PhisicalPcComponent : MonoBehaviour
             }
         });
 
+        Colliders = transform.GetComponentsInChildren<Collider>().ToList();
         SpecialCreate();
+    }
+
+    public static void IgnoreColliders(PhisicalPcComponent p1, PhisicalPcComponent p2, bool state)
+    {
+        foreach(var cl1 in p1.Colliders)
+        {
+            foreach(var cl2 in p2.Colliders)
+            {
+                Physics.IgnoreCollision(cl1, cl2, state);
+            }
+        }
     }
 
     public void Attach(PhisicalPcComponent to)
     {
         print("Attaching component to " + to.name);
         Rigidbody.isKinematic = true;
-        Physics.IgnoreCollision(GetComponentInChildren<Collider>(), to.GetComponentInChildren<Collider>(), true);
+        IgnoreColliders(this, to, true);
         AttachedTo = to;
         Attached = true;
     }
@@ -69,9 +85,9 @@ public class PhisicalPcComponent : MonoBehaviour
         print("Deattaching component from " + AttachedTo.name);
         transform.SetParent(null);
         Rigidbody.isKinematic = false;
-           
-        
-        Physics.IgnoreCollision(GetComponentInChildren<Collider>(), AttachedTo.GetComponentInChildren<Collider>(), false);
+
+
+        IgnoreColliders(this, AttachedTo, false);
 
         AttachedTo = null;
         Attached = false;
@@ -83,11 +99,5 @@ public class PhisicalPcComponent : MonoBehaviour
     public virtual void SpecialCreate()
     {
 
-    }
-
-    void OnTransformParentChanged()
-    {
-        Debug.Log($"[ParentChangeProbe] {name} parent -> {(transform.parent ? transform.parent.name : "null")}\n{new System.Diagnostics.StackTrace()}");
-        lastParent = transform.parent;
     }
 }
