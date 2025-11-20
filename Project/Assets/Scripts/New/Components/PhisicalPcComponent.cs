@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 using UnityEngine.XR.Interaction.Toolkit;
 using VHACD.Unity;
 
@@ -100,4 +101,9 @@ public class PhisicalPcComponent : MonoBehaviour
     {
 
     }
+}
+
+public interface IAttachableTo
+{
+    public void AttachComponent(PhisicalPcComponent pc, Action OnDeAttach, Action SpecialBeh);
 }

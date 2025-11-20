@@ -6,7 +6,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class PhisicalMotherBoard : PhisicalPcComponent
+public class PhisicalMotherBoard : PhisicalPcComponent, IAttachableTo
 {
     [HideInInspector]
     public GameObject CpuHighlight;
@@ -22,10 +22,10 @@ public class PhisicalMotherBoard : PhisicalPcComponent
         Singleton.ItemGrabManager.OnItemDropped += (item) =>
         {
             print("Figuring if item dropped can be attached");
-            if(!CpuMounted && item.GetComponent<PhisicalCpu>() != null && Vector3.Distance(item.transform.position, CpuHighlight.transform.position) < 0.1f)
+            if(!CpuMounted && item.TryGetComponent(out PhisicalCpu cpu) && Vector3.Distance(item.transform.position, CpuHighlight.transform.position) < 0.1f)
             {
                 print("Trying to mount CPU");
-                AttachComponent(item.GetComponent<PhisicalPcComponent>(),
+                AttachComponent(cpu,
                     () => { CpuMounted = false; },
                     () => {
                         Tween.LocalPosition(item.transform, CpuHighlight.transform.localPosition, 0.5f, 0, Tween.EaseInOut);
@@ -36,12 +36,12 @@ public class PhisicalMotherBoard : PhisicalPcComponent
                 );
             }
 
-            if(RamSlots.Exists(r => !r.isOccupied) && item.GetComponent<PhisicalRam>() != null && GetClosestHighlight(RamSlots, item.gameObject, 0.1f, out var closestRam))
+            if(RamSlots.Exists(r => !r.isOccupied) && item.TryGetComponent(out PhisicalRam ram) && GetClosestHighlight(RamSlots, item.gameObject, 0.1f, out var closestRam))
             {
                 print("Trying to mount RAM");
                 RamSlots.ForEach(r => r.slotObject.SetActive(false));
 
-                AttachComponent(item.GetComponent<PhisicalPcComponent>(),
+                AttachComponent(ram,
                     () => { RamSlots[RamSlots.FindIndex(r => r.slotObject == closestRam)] = (closestRam, false); },
                     () => {
                         Tween.LocalPosition(item.transform, closestRam.transform.localPosition, 0.5f, 0, Tween.EaseInOut);
@@ -51,12 +51,12 @@ public class PhisicalMotherBoard : PhisicalPcComponent
                 );                                                         
             }
 
-            if (GpuSlots.Exists(r => !r.isOccupied) && item.GetComponent<PhisicalGpu>() != null && GetClosestHighlight(GpuSlots, item.gameObject, 0.1f, out var closestGpu))
+            if (GpuSlots.Exists(r => !r.isOccupied) && item.TryGetComponent(out PhisicalGpu gpu) && GetClosestHighlight(GpuSlots, item.gameObject, 0.1f, out var closestGpu))
             {
                 print("Trying to mount GPU");
                 GpuSlots.ForEach(r => r.slotObject.SetActive(false));
 
-                AttachComponent(item.GetComponent<PhisicalPcComponent>(),
+                AttachComponent(gpu,
                     () => { GpuSlots[GpuSlots.FindIndex(r => r.slotObject == closestGpu)] = (closestGpu, false); },
                     () => {
                         Tween.LocalPosition(item.transform, closestGpu.transform.localPosition, 0.5f, 0, Tween.EaseInOut);
@@ -155,7 +155,7 @@ public class PhisicalMotherBoard : PhisicalPcComponent
 
     public void AttachComponent(PhisicalPcComponent pc, Action OnDeAttach, Action SpecialBeh)
     {
-        print("Mounting component to this motherboard.");
+        print("Mounting component to this component.");
         pc.Attach(this);
         pc.OnDeAttach += () => { OnDeAttach?.Invoke(); };
         pc.gameObject.transform.SetParent(transform.GetChild(0), true);
