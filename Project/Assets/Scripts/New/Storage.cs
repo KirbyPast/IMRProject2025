@@ -99,192 +99,194 @@ public class Storage : MonoBehaviour
             }
         ));
 
-    // ===== GPUs =====
+        Components.Add(new Psu(
+            Id: "6",
+            Name: "FOCUS GX-750",
+            Description: "Quiet, efficient 80+ Gold PSU with full modular cables and ATX 3.0 support.",
+            Manufacturer: "Seasonic",
+            Model: "GX-750",
+            Price: 119.99f,
+            Specs: new List<Spec> {
+                new Spec("Wattage", "750W"),
+                new Spec("Efficiency", "80+ Gold"),
+                new Spec("Modularity", "Fully Modular"),
+                new Spec("ATX", "ATX 3.0")
+            }
+        ));
 
-    /*Components.Add(new Gpu(
-        Id: "3",
-        Name: "Radeon RX 7800 XT",
-        Description: "High-value 1440p/entry-4K GPU with modern AV1 encode and DisplayPort 2.1.",
-        Price: 499.99f,
-        Manufacturer: "AMD",
-        Maker: "AMD",
-        Model: "RX 7800 XT",
-        Specs: new List<Spec> {
-            new Spec("VRAM", "16 GB GDDR6"),
-            new Spec("Game/Boost", "2.1 / 2.4 GHz"),
-            new Spec("TBP", "263W"),
-            new Spec("Outputs", "HDMI 2.1, 3x DP 2.1")
-        }
-    ));
+        // ===== GPUs =====
 
-    // ===== Motherboards =====
-    Components.Add(new MotherBoard(
-        Id: "4",
-        Name: "ROG STRIX B650E-F",
-        Description: "AM5 ATX board with PCIe 5.0 support and robust VRMs for Ryzen 7000/8000.",
-        Manufacturer: "ASUS",
-        Model: "B650E-F",
-        Price: 259.99f,
-        Specs: new List<Spec> {
-            new Spec("Socket", "AM5"),
-            new Spec("Form Factor", "ATX"),
-            new Spec("Memory", "DDR5"),
-            new Spec("PCIe", "Gen 5 GPU/M.2")
-        }
-    ));
+        /*Components.Add(new Gpu(
+            Id: "3",
+            Name: "Radeon RX 7800 XT",
+            Description: "High-value 1440p/entry-4K GPU with modern AV1 encode and DisplayPort 2.1.",
+            Price: 499.99f,
+            Manufacturer: "AMD",
+            Maker: "AMD",
+            Model: "RX 7800 XT",
+            Specs: new List<Spec> {
+                new Spec("VRAM", "16 GB GDDR6"),
+                new Spec("Game/Boost", "2.1 / 2.4 GHz"),
+                new Spec("TBP", "263W"),
+                new Spec("Outputs", "HDMI 2.1, 3x DP 2.1")
+            }
+        ));
 
-    Components.Add(new MotherBoard(
-        Id: "5",
-        Name: "MAG Z790 TOMAHAWK",
-        Description: "LGA1700 ATX with strong I/O and PCIe 5.0 x16 for 12th–14th Gen Intel CPUs.",
-        Manufacturer: "MSI",
-        Model: "Z790 TOMAHAWK",
-        Price: 289.99f,
-        Specs: new List<Spec> {
-            new Spec("Socket", "LGA1700"),
-            new Spec("Form Factor", "ATX"),
-            new Spec("Memory", "DDR5"),
-            new Spec("PCIe", "Gen 5 x16")
-        }
-    ));
+        // ===== Motherboards =====
+        Components.Add(new MotherBoard(
+            Id: "4",
+            Name: "ROG STRIX B650E-F",
+            Description: "AM5 ATX board with PCIe 5.0 support and robust VRMs for Ryzen 7000/8000.",
+            Manufacturer: "ASUS",
+            Model: "B650E-F",
+            Price: 259.99f,
+            Specs: new List<Spec> {
+                new Spec("Socket", "AM5"),
+                new Spec("Form Factor", "ATX"),
+                new Spec("Memory", "DDR5"),
+                new Spec("PCIe", "Gen 5 GPU/M.2")
+            }
+        ));
 
-    // ===== RAM =====
-    Components.Add(new Ram(
-        Id: "6",
-        Name: "Vengeance 32GB (2x16) DDR5-6000",
-        Description: "Balanced DDR5 kit ideal for AM5/Intel platforms; great price-to-perf.",
-        Manufacturer: "Corsair",
-        Model: "CMK32GX5M2B6000",
-        Price: 109.99f,
-        Specs: new List<Spec> {
-            new Spec("Capacity", "32 GB"),
-            new Spec("Speed", "DDR5-6000"),
-            new Spec("CAS", "CL36"),
-            new Spec("Voltage", "1.35V")
-        }
-    ));
+        Components.Add(new MotherBoard(
+            Id: "5",
+            Name: "MAG Z790 TOMAHAWK",
+            Description: "LGA1700 ATX with strong I/O and PCIe 5.0 x16 for 12th–14th Gen Intel CPUs.",
+            Manufacturer: "MSI",
+            Model: "Z790 TOMAHAWK",
+            Price: 289.99f,
+            Specs: new List<Spec> {
+                new Spec("Socket", "LGA1700"),
+                new Spec("Form Factor", "ATX"),
+                new Spec("Memory", "DDR5"),
+                new Spec("PCIe", "Gen 5 x16")
+            }
+        ));
 
-    Components.Add(new Ram(
-        Id: "7",
-        Name: "Trident Z5 64GB (2x32) DDR5-6400",
-        Description: "High-capacity, high-speed kit for heavy creative workloads and gaming.",
-        Manufacturer: "G.SKILL",
-        Model: "F5-6400J3239G32GX2-TZ5K",
-        Price: 219.99f,
-        Specs: new List<Spec> {
-            new Spec("Capacity", "64 GB"),
-            new Spec("Speed", "DDR5-6400"),
-            new Spec("CAS", "CL32"),
-            new Spec("Voltage", "1.40V")
-        }
-    ));
+        // ===== RAM =====
+        Components.Add(new Ram(
+            Id: "6",
+            Name: "Vengeance 32GB (2x16) DDR5-6000",
+            Description: "Balanced DDR5 kit ideal for AM5/Intel platforms; great price-to-perf.",
+            Manufacturer: "Corsair",
+            Model: "CMK32GX5M2B6000",
+            Price: 109.99f,
+            Specs: new List<Spec> {
+                new Spec("Capacity", "32 GB"),
+                new Spec("Speed", "DDR5-6000"),
+                new Spec("CAS", "CL36"),
+                new Spec("Voltage", "1.35V")
+            }
+        ));
 
-    // ===== Drives =====
-    Components.Add(new Drive(
-        Id: "8",
-        Name: "990 PRO 1TB NVMe",
-        Description: "PCIe 4.0 M.2 SSD with top-tier sequential speeds and solid endurance.",
-        Manufacturer: "Samsung",
-        Model: "MZ-V9P1T0",
-        Price: 119.99f,
-        Specs: new List<Spec> {
-            new Spec("Form Factor", "M.2 2280"),
-            new Spec("Interface", "PCIe 4.0 x4 NVMe"),
-            new Spec("Seq Read/Write", "7,450 / 6,900 MB/s"),
-            new Spec("Endurance", "600 TBW")
-        }
-    ));
+        Components.Add(new Ram(
+            Id: "7",
+            Name: "Trident Z5 64GB (2x32) DDR5-6400",
+            Description: "High-capacity, high-speed kit for heavy creative workloads and gaming.",
+            Manufacturer: "G.SKILL",
+            Model: "F5-6400J3239G32GX2-TZ5K",
+            Price: 219.99f,
+            Specs: new List<Spec> {
+                new Spec("Capacity", "64 GB"),
+                new Spec("Speed", "DDR5-6400"),
+                new Spec("CAS", "CL32"),
+                new Spec("Voltage", "1.40V")
+            }
+        ));
 
-    Components.Add(new Drive(
-        Id: "9",
-        Name: "WD Blue 2TB HDD",
-        Description: "Reliable mass storage for media libraries, backups, and general use.",
-        Manufacturer: "Western Digital",
-        Model: "WD20EZBX",
-        Price: 54.99f,
-        Specs: new List<Spec> {
-            new Spec("Form Factor", "3.5\""),
-            new Spec("Interface", "SATA III"),
-            new Spec("RPM", "7200"),
-            new Spec("Cache", "256 MB")
-        }
-    ));
+        // ===== Drives =====
+        Components.Add(new Drive(
+            Id: "8",
+            Name: "990 PRO 1TB NVMe",
+            Description: "PCIe 4.0 M.2 SSD with top-tier sequential speeds and solid endurance.",
+            Manufacturer: "Samsung",
+            Model: "MZ-V9P1T0",
+            Price: 119.99f,
+            Specs: new List<Spec> {
+                new Spec("Form Factor", "M.2 2280"),
+                new Spec("Interface", "PCIe 4.0 x4 NVMe"),
+                new Spec("Seq Read/Write", "7,450 / 6,900 MB/s"),
+                new Spec("Endurance", "600 TBW")
+            }
+        ));
 
-    // ===== Coolers =====
-    Components.Add(new Cooler(
-        Id: "10",
-        Name: "NH-D15",
-        Description: "Premium dual-tower air cooler known for quiet operation and high thermal headroom.",
-        Manufacturer: "Noctua",
-        Model: "NH-D15",
-        Price: 99.95f,
-        Specs: new List<Spec> {
-            new Spec("Type", "Air"),
-            new Spec("Height", "165 mm"),
-            new Spec("TDP Rating", "≈220W"),
-            new Spec("Sockets", "AM5/AM4/LGA1700")
-        }
-    ));
+        Components.Add(new Drive(
+            Id: "9",
+            Name: "WD Blue 2TB HDD",
+            Description: "Reliable mass storage for media libraries, backups, and general use.",
+            Manufacturer: "Western Digital",
+            Model: "WD20EZBX",
+            Price: 54.99f,
+            Specs: new List<Spec> {
+                new Spec("Form Factor", "3.5\""),
+                new Spec("Interface", "SATA III"),
+                new Spec("RPM", "7200"),
+                new Spec("Cache", "256 MB")
+            }
+        ));
 
-    Components.Add(new Cooler(
-        Id: "11",
-        Name: "iCUE H100i Elite",
-        Description: "240 mm AIO with RGB and good performance in compact ATX/mATX builds.",
-        Manufacturer: "Corsair",
-        Model: "H100i",
-        Price: 149.99f,
-        Specs: new List<Spec> {
-            new Spec("Type", "AIO (240 mm)"),
-            new Spec("Fans", "2x120 mm"),
-            new Spec("RGB", "Yes"),
-            new Spec("Sockets", "AM5/AM4/LGA1700")
-        }
-    ));
+        // ===== Coolers =====
+        Components.Add(new Cooler(
+            Id: "10",
+            Name: "NH-D15",
+            Description: "Premium dual-tower air cooler known for quiet operation and high thermal headroom.",
+            Manufacturer: "Noctua",
+            Model: "NH-D15",
+            Price: 99.95f,
+            Specs: new List<Spec> {
+                new Spec("Type", "Air"),
+                new Spec("Height", "165 mm"),
+                new Spec("TDP Rating", "≈220W"),
+                new Spec("Sockets", "AM5/AM4/LGA1700")
+            }
+        ));
 
-    // ===== PSUs =====
-    Components.Add(new Psu(
-        Id: "12",
-        Name: "FOCUS GX-750",
-        Description: "Quiet, efficient 80+ Gold PSU with full modular cables and ATX 3.0 support.",
-        Manufacturer: "Seasonic",
-        Model: "GX-750",
-        Price: 119.99f,
-        Specs: new List<Spec> {
-            new Spec("Wattage", "750W"),
-            new Spec("Efficiency", "80+ Gold"),
-            new Spec("Modularity", "Fully Modular"),
-            new Spec("ATX", "ATX 3.0")
-        }
-    ));
+        Components.Add(new Cooler(
+            Id: "11",
+            Name: "iCUE H100i Elite",
+            Description: "240 mm AIO with RGB and good performance in compact ATX/mATX builds.",
+            Manufacturer: "Corsair",
+            Model: "H100i",
+            Price: 149.99f,
+            Specs: new List<Spec> {
+                new Spec("Type", "AIO (240 mm)"),
+                new Spec("Fans", "2x120 mm"),
+                new Spec("RGB", "Yes"),
+                new Spec("Sockets", "AM5/AM4/LGA1700")
+            }
+        ));
 
-    Components.Add(new Psu(
-        Id: "13",
-        Name: "RM850x",
-        Description: "Proven 850W platform suitable for high-end GPUs; fully modular cabling.",
-        Manufacturer: "Corsair",
-        Model: "RM850x (2023)",
-        Price: 139.99f,
-        Specs: new List<Spec> {
-            new Spec("Wattage", "850W"),
-            new Spec("Efficiency", "80+ Gold"),
-            new Spec("Modularity", "Fully Modular"),
-            new Spec("ATX", "ATX 3.0 / PCIe 5")
-        }
-    ));
+        // ===== PSUs =====
 
 
-    Components.Add(new Case(
-        Id: "14",
-        Name: "case",
-        Description: "case",
-        Manufacturer: "case",
-        Model: "case",
-        Price: 139.99f,
-        Specs: new List<Spec> {
-            new Spec("case", "case"),
+        Components.Add(new Psu(
+            Id: "13",
+            Name: "RM850x",
+            Description: "Proven 850W platform suitable for high-end GPUs; fully modular cabling.",
+            Manufacturer: "Corsair",
+            Model: "RM850x (2023)",
+            Price: 139.99f,
+            Specs: new List<Spec> {
+                new Spec("Wattage", "850W"),
+                new Spec("Efficiency", "80+ Gold"),
+                new Spec("Modularity", "Fully Modular"),
+                new Spec("ATX", "ATX 3.0 / PCIe 5")
+            }
+        ));
 
-    ));}*/
-}
+
+        Components.Add(new Case(
+            Id: "14",
+            Name: "case",
+            Description: "case",
+            Manufacturer: "case",
+            Model: "case",
+            Price: 139.99f,
+            Specs: new List<Spec> {
+                new Spec("case", "case"),
+
+        ));}*/
+    }
 
     [SerializeField]
     public List<PcComponent> ViewComponents = new();

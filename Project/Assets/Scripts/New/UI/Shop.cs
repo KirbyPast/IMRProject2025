@@ -52,6 +52,6 @@ public class Shop : MonoBehaviour
         var newPhisicalPcComponent = Instantiate(originalPhisicalPcComponent);
         newPhisicalPcComponent.AddComponent(componentType);
         newPhisicalPcComponent.GetComponent<PhisicalPcComponent>().Create(pc);
-        newPhisicalPcComponent.gameObject.SetActive(true);
+        newPhisicalPcComponent.SetActive(true);
     }
 }

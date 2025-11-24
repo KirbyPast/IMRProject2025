@@ -10,9 +10,12 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
     [HideInInspector]
     public GameObject MotherboardHighlight;
     private GameObject MotherboardProjection;
+    [HideInInspector]
+    public GameObject PsuHighlight;
 
     [Header("Case")]
     public bool MotherboardMounted = false;
+    public bool PsuMounted = false;
 
     private void Start()
     {
@@ -30,6 +33,19 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
                         Tween.Rotation(item.transform, MotherboardProjection.transform.rotation, 0.5f, 0, Tween.EaseInOut);
                         MotherboardProjection.SetActive(false);
                         MotherboardMounted = true;
+                    }
+                );
+            }
+            if (!PsuMounted && item.TryGetComponent(out PhisicalPsu psu) && Vector3.Distance(item.transform.position, PsuHighlight.transform.position) < 0.5f)
+            {
+                print("Trying to mount Motherboard");
+                AttachComponent(psu,
+                    () => { PsuMounted = false; },
+                    () => {
+                        Tween.LocalPosition(item.transform, PsuHighlight.transform.localPosition, 0.5f, 0, Tween.EaseInOut);
+                        Tween.Rotation(item.transform, PsuHighlight.transform.rotation, 0.5f, 0, Tween.EaseInOut);
+                        PsuHighlight.SetActive(false);
+                        PsuMounted = true;
                     }
                 );
             }
@@ -70,6 +86,10 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
                         );
                 }
             }
+            if(!PsuMounted && Singleton.ItemGrabManager.HasType<PhisicalPsu>(out var psuItem))
+            {
+                PsuHighlight.SetActive(Vector3.Distance(psuItem.transform.position, PsuHighlight.transform.position) < 0.5f);
+            }
         }
     }
 
@@ -77,6 +97,12 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
     {
         MotherboardHighlight = transform.FindDeepChild("MotherboardHighlight").gameObject;
         if (MotherboardHighlight == null)
+        {
+            Debug.LogError("MotherboardHighlight not found in Case");
+        }
+
+        PsuHighlight = transform.FindDeepChild("PsuHighlight").gameObject;
+        if (PsuHighlight == null)
         {
             Debug.LogError("MotherboardHighlight not found in Case");
         }

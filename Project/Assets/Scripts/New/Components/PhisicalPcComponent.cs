@@ -33,6 +33,7 @@ public class PhisicalPcComponent : MonoBehaviour
             prefab = Resources.Load<GameObject>("models/empty");
 
         mesh = Instantiate(prefab, transform);
+        mesh.transform.localPosition = Vector3.zero;
 
         material = Resources.Load<Material>($"materials/{thisComponent.ModelId}");
         if (material == null)
