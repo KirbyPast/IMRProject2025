@@ -161,6 +161,37 @@ public class PhisicalMotherBoard : PhisicalPcComponent, IAttachableTo
         pc.gameObject.transform.SetParent(transform.GetChild(0), true);
         SpecialBeh?.Invoke();
     }
+    
+    public override bool CheckCompleteness(out string missingPart)
+    {
+        // 1. Verificăm CPU
+        if (!CpuMounted)
+        {
+            missingPart = "CPU is missing!";
+            return false;
+        }
+
+        // 2. Verificăm RAM (Măcar unul să fie montat)
+        // Putem fi mai stricți (toate sloturile) sau permisivi (minim unul)
+        bool hasRam = RamSlots.Any(slot => slot.isOccupied);
+        if (!hasRam)
+        {
+            missingPart = "No RAM memory installed!";
+            return false;
+        }
+
+        // 3. Verificăm GPU (Măcar unul)
+        bool hasGpu = GpuSlots.Any(slot => slot.isOccupied);
+        if (!hasGpu)
+        {
+            missingPart = "No GPU installed!";
+            return false;
+        }
+
+        // Dacă am ajuns aici, totul e ok pe placa de bază
+        missingPart = string.Empty;
+        return true;
+    }
 }
 
 [Serializable]

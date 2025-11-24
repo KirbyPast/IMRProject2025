@@ -92,4 +92,23 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
     }
 
 
+    public override bool CheckCompleteness(out string missingPart)
+    {
+        if (!MotherboardMounted)
+        {
+            missingPart = "Motherboard is missing from the case!";
+            return false;
+        }
+
+        var attachedMotherboard = transform.GetChild(0).GetComponentInChildren<PhisicalMotherBoard>();
+
+        if (attachedMotherboard == null)
+        {
+            missingPart = "Motherboard logic not found!";
+            return false;
+        }
+
+        return attachedMotherboard.CheckCompleteness(out missingPart);
+    }
+
 }

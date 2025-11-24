@@ -101,6 +101,12 @@ public class PhisicalPcComponent : MonoBehaviour
     {
 
     }
+
+    public virtual bool CheckCompleteness(out string missingPart)
+    {
+        missingPart = string.Empty;
+        return true; 
+    }
 }
 
 public interface IAttachableTo
