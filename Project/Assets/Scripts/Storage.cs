@@ -10,21 +10,6 @@ public class Storage : MonoBehaviour
     {
         Components.Clear();
         print("Generating components");
-        // ===== CPUs =====
-        //Components.Add(new Cpu(
-        //    Id: "0",
-        //    Name: "Ryzen 7 7800X3D",
-        //    Description: "8-core/16-thread AM5 gaming CPU with 3D V-Cache; excels in latency-sensitive titles.",
-        //    Price: 399.99f,
-        //    Manufacturer: "AMD",
-        //    Model: "7800X3D",
-        //    specs: new List<Spec> {
-        //        new Spec("Cores/Threads", "8/16"),
-        //        new Spec("Base/Boost", "4.2 / 5.0 GHz"),
-        //        new Spec("Socket", "AM5"),
-        //        new Spec("TDP", "120W")
-        //    }
-        //));
 
         Components.Add(new Cpu(
             Id: "1",
@@ -107,10 +92,10 @@ public class Storage : MonoBehaviour
             Model: "GX-750",
             Price: 119.99f,
             Specs: new List<Spec> {
-                new Spec("Wattage", "750W"),
-                new Spec("Efficiency", "80+ Gold"),
-                new Spec("Modularity", "Fully Modular"),
-                new Spec("ATX", "ATX 3.0")
+                new ("Wattage", "750W"),
+                new ("Efficiency", "80+ Gold"),
+                new ("Modularity", "Fully Modular"),
+                new ("ATX", "ATX 3.0")
             }
         ));
 
