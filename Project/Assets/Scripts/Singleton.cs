@@ -10,6 +10,9 @@ public class Singleton : MonoBehaviour
     public ItemGrabManager itemGrabManager;
     public static ItemGrabManager ItemGrabManager => Instance.itemGrabManager;
 
+    public ViewPcComponentUI viewPcComponentUI;
+    public static ViewPcComponentUI ViewPcComponentUI => Instance.viewPcComponentUI;
+
     private void Awake()
     {
         if (Instance == null)
