@@ -8,6 +8,8 @@ using UnityEngine;
 public class PhisicalCase : PhisicalPcComponent, IAttachableTo
 {
     [HideInInspector]
+    public int buttonHeightOffset = 1;
+    public GameObject validatorButtonPrefab;
     public GameObject MotherboardHighlight;
     private GameObject MotherboardProjection;
     [HideInInspector]
@@ -19,6 +21,7 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
 
     private void Start()
     {
+        SpawnValidatorButton();
         MotherboardProjection = Instantiate(MotherboardHighlight, MotherboardHighlight.transform.parent);
         MotherboardProjection.name = "MotherboardProjection";
         Singleton.ItemGrabManager.OnItemDropped += (item) =>
@@ -52,6 +55,25 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
         };
     }
 
+    private void SpawnValidatorButton()
+    {
+        if (validatorButtonPrefab == null)
+        {
+            validatorButtonPrefab = Resources.Load<GameObject>("models/PC_Validator_UI");
+        }
+
+        Vector3 spawnPos = transform.position + new Vector3(0, buttonHeightOffset, 0);
+
+        GameObject btnObj = Instantiate(validatorButtonPrefab, spawnPos, Quaternion.identity);
+
+        btnObj.transform.SetParent(this.transform);
+
+        CaseFloatingButton btnScript = btnObj.GetComponent<CaseFloatingButton>();
+        if(btnScript != null)
+        {
+            btnScript.Initialize(this);
+        }
+    }
 
     private void Update()
     {
@@ -123,6 +145,12 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
         if (!MotherboardMounted)
         {
             missingPart = "Motherboard is missing from the case!";
+            return false;
+        }
+
+        if(!PsuMounted)
+        {
+            missingPart = "Power Supply Unit is missing from the case!";
             return false;
         }
 

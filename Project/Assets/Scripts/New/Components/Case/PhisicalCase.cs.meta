@@ -3,7 +3,15 @@ guid: dc26cd5719cbd894ab406e7c717667b3
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - mesh: {instanceID: 0}
+  - material: {instanceID: 0}
+  - Interactible: {instanceID: 0}
+  - Rigidbody: {instanceID: 0}
+  - AttachedTo: {instanceID: 0}
+  - validatorButtonPrefab: {fileID: 3472597530917705483, guid: add9445ea91c1e5449893660b27611d6, type: 3}
+  - MotherboardHighlight: {instanceID: 0}
+  - PsuHighlight: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
