@@ -7,8 +7,8 @@ using UnityEngine.UI;
 
 public class PriceInfo : MonoBehaviour
 {
-    public float Price;
-    public TMP_Text T_Price;
+    public float Value;
+    public TMP_Text T_Value;
     public float Step = 25;
 
     public Button B_Up, B_Down;
@@ -19,21 +19,21 @@ public class PriceInfo : MonoBehaviour
         UpdateText();
         B_Up.onClick.AddListener(() =>
         {
-            Price += Step;
+            Value += Step;
             UpdateText();
-            OnChange?.Invoke(Price);
+            OnChange?.Invoke(Value);
         });
         B_Down.onClick.AddListener(() =>
         {
-            Price -= Step;
-            if(Price < 0) Price = 0;
+            Value -= Step;
+            if(Value < 0) Value = 0;
             UpdateText();
-            OnChange?.Invoke(Price);
+            OnChange?.Invoke(Value);
         });
     }
 
     public void UpdateText()
     {
-        T_Price.text = Price.ToString();
+        T_Value.text = Value.ToString();
     }
 }

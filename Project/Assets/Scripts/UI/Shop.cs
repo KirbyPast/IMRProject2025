@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Shop : MonoBehaviour
@@ -12,6 +13,12 @@ public class Shop : MonoBehaviour
     public GameObject originalPhisicalPcComponent; //Case, Cooler, Cpu, Gpu, Motherboard, Psu, Ram, Storage
     public TMP_Dropdown D_Types, D_Order;
     public PriceInfo PI_Min, PI_Max;
+    public TMP_InputField In_Search;
+    public int CurrentTypeFilter = 0;
+    public string CurrentSearchFilter;
+    public GameObject T_Empty;
+    public Paginator P_Paginator;
+    public int PageSize = 10;
 
     private void Start()
     {
@@ -23,25 +30,14 @@ public class Shop : MonoBehaviour
 
         D_Types.onValueChanged.AddListener(val =>
         {
-            Type componentType = val switch
-            {
-                1 => typeof(Case),
-                2 => typeof(Cooler),
-                3 => typeof(Cpu),
-                4 => typeof(Gpu),
-                5 => typeof(MotherBoard),
-                6 => typeof(Psu),
-                7 => typeof(Ram),
-                8 => typeof(Storage),
-                _ => typeof(PcComponent)
+            CurrentTypeFilter = val;
+            FilterAll();
+        });
 
-            };
-
-            foreach(var comp in allComponents)
-            {
-                comp.gameObject.SetActive(componentType.IsInstanceOfType(comp.thisComponent));
-            }
-
+        In_Search.onValueChanged.AddListener(val =>
+        {
+            CurrentSearchFilter = val;
+            FilterAll();
         });
 
         D_Order.onValueChanged.AddListener(val =>
@@ -83,8 +79,12 @@ public class Shop : MonoBehaviour
                 children[i].SetSiblingIndex(i);
         });
 
-        PI_Min.OnChange += (val) => { FilterPrice(val, PI_Max.Price); };
-        PI_Max.OnChange += (val) => { FilterPrice(PI_Min.Price, val); };
+        PI_Min.OnChange += (val) => { FilterAll(); };
+        PI_Max.OnChange += (val) => { FilterAll(); };
+
+        P_Paginator.OnChange += (val) => { FilterAll(); };
+
+        FilterAll();
     }
 
     public void InstantiatComponentUI(PcComponent pc)
@@ -124,11 +124,77 @@ public class Shop : MonoBehaviour
         newPhisicalPcComponent.SetActive(true);
     }
 
-    public void FilterPrice(float min, float max)
+    void FilterAll()
     {
+        string search = CurrentSearchFilter?.Trim() ?? string.Empty;
+        float minPrice = PI_Min.Value;
+        float maxPrice = PI_Max.Value;
+
+        Type componentType = CurrentTypeFilter switch
+        {
+            1 => typeof(Case),
+            2 => typeof(Cooler),
+            3 => typeof(Cpu),
+            4 => typeof(Gpu),
+            5 => typeof(MotherBoard),
+            6 => typeof(Psu),
+            7 => typeof(Ram),
+            8 => typeof(Storage),
+            _ => typeof(PcComponent)
+        };
+
+        List<PcComponentUI> filtered = new();
         foreach (var comp in allComponents)
         {
-            comp.gameObject.SetActive(comp.thisComponent.Price >= min && comp.thisComponent.Price <= max);
+            if (MatchesAllFilters(comp, search, componentType, minPrice, maxPrice))
+                filtered.Add(comp);
         }
-    }    
+
+        int total = filtered.Count;
+
+        int pageIndex = P_Paginator.Value;
+        int pageSize = PageSize;
+
+        int start = pageIndex * pageSize;
+        int end = Mathf.Min(start + pageSize, total);
+
+        foreach (var comp in allComponents)
+            comp.gameObject.SetActive(false);
+
+        for (int i = start; i < end; i++)
+            filtered[i].gameObject.SetActive(true);
+
+        int currentOnPage = Mathf.Max(0, end - start);
+
+        P_Paginator.UpdateCounters(currentOnPage, pageSize);
+
+        T_Empty.SetActive(total == 0);
+    }
+
+    bool MatchesAllFilters(PcComponentUI comp, string search, Type componentType, float minPrice, float maxPrice)
+    {
+        var c = comp.thisComponent;
+
+        if (!componentType.IsInstanceOfType(c))
+            return false;
+
+        if (c.Price < minPrice || c.Price > maxPrice)
+            return false;
+
+        if (!string.IsNullOrEmpty(search))
+        {
+            string s = search.ToLowerInvariant();
+
+            if (!(c.Name?.ToLowerInvariant().Contains(s) == true
+                  || c.Description?.ToLowerInvariant().Contains(s) == true
+                  || c.Specs.Any(spec =>
+                         (spec.Name?.ToLowerInvariant().Contains(s) == true) ||
+                         (spec.Value?.ToLowerInvariant().Contains(s) == true))))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
