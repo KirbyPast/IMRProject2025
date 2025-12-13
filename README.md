@@ -14,3 +14,12 @@ Week 8:
 -inca nu e gata, dar am inceput lucrul la revamp pentru butoane (sa "zboare" pe ecran in loc sa fie pe monitorul static - wip).
 
   link video: https://drive.google.com/file/d/1ZYWGljlptN6nSTDGeAH99apcfVCkksj4/view
+
+Week 9: 
+-cautare cu keyword in shop
+-paginatie pentru shop
+-in loc ca butonul de verificare sa fie unul global, acum fiecare case se spawneaza cu un buton special asociat
+-am inceput sa adaugam sfx-uri si muzica
+-am inceput sa adaugam mai multe modele din aceeasi componenta
+
+link video: wip
