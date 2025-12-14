@@ -30,10 +30,9 @@ public class Paginator : MonoBehaviour
         {
             if (CurrentOnPage < MaxOnPage)
                 return;
-            print("RIGHJT");
-
-            T_Value.text = Value.ToString();
+           
             Value++;
+            T_Value.text = Value.ToString();
             OnChange?.Invoke(Value);
             UpdateButtons();
         });
