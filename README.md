@@ -27,4 +27,4 @@ Week 9:
 -am inceput sa adaugam mai multe modele din aceeasi componenta
 
 
-link video: wip
+link video: https://drive.google.com/file/d/1zIWrGeOUrIG6AaY1WH4Xjpw8KCmY6eDY/view?usp=sharing
