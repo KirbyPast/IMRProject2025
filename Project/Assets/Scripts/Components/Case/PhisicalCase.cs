@@ -15,6 +15,8 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
     [HideInInspector]
     public GameObject PsuHighlight;
 
+    public List<Slot> FanSlots = new();
+
     [Header("Case")]
     public bool MotherboardMounted = false;
     public bool PsuMounted = false;
@@ -49,6 +51,20 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
                         Tween.Rotation(item.transform, PsuHighlight.transform.rotation, 0.5f, 0, Tween.EaseInOut);
                         PsuHighlight.SetActive(false);
                         PsuMounted = true;
+                    }
+                );
+            }
+            if (FanSlots.Exists(r => !r.isOccupied) && item.TryGetComponent(out PhisicalCooler cooler) && GetClosestHighlight(FanSlots, item.gameObject, 0.25f, out var closestFan))
+            {
+                print("Trying to mount Fan");
+                FanSlots.ForEach(r => r.slotObject.SetActive(false));
+
+                AttachComponent(cooler,
+                    () => { FanSlots[FanSlots.FindIndex(r => r.slotObject == closestFan)] = (closestFan, false); },
+                    () => {
+                        Tween.LocalPosition(item.transform, closestFan.transform.localPosition, 0.5f, 0, Tween.EaseInOut);
+                        Tween.Rotation(item.transform, closestFan.transform.rotation, 0.5f, 0, Tween.EaseInOut);
+                        FanSlots[FanSlots.FindIndex(r => r.slotObject == closestFan)] = (closestFan, true);
                     }
                 );
             }
@@ -113,6 +129,11 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
                 PsuHighlight.SetActive(Vector3.Distance(psuItem.transform.position, PsuHighlight.transform.position) < 0.5f);
             }
         }
+
+        if (FanSlots.Exists(r => !r.isOccupied) && Singleton.ItemGrabManager.HasType<PhisicalCooler>(out var gpuItem))
+        {
+            ShowClosestHighlight(FanSlots, gpuItem.gameObject, 0.25f);
+        }
     }
 
     public override void SpecialCreate()
@@ -127,6 +148,12 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
         if (PsuHighlight == null)
         {
             Debug.LogError("MotherboardHighlight not found in Case");
+        }
+
+        FanSlots = transform.FindAllDeepChildren("FanHighlight").Select(t => new Slot(t.gameObject, false)).ToList();
+        if (FanSlots.Count == 0)
+        {
+            Debug.LogError("FanHighlights not found in MotherBoard");
         }
     }
 
@@ -160,9 +187,53 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
         {
             missingPart = "Motherboard logic not found!";
             return false;
-        }
+        }       
 
         return attachedMotherboard.CheckCompleteness(out missingPart);
+    }
+
+    public void ShowClosestHighlight(List<Slot> highlights, GameObject item, float treshold)
+    {
+        var min = Mathf.Infinity;
+        var closestSlot = (GameObject)null;
+
+        foreach (var (highlight, occupied) in highlights.Where(r => !r.isOccupied))
+        {
+            var dist = Vector3.Distance(item.transform.position, highlight.transform.position);
+            highlight.SetActive(false);
+            if (dist < min)
+            {
+                min = dist;
+                closestSlot = highlight;
+            }
+        }
+
+        if (min < treshold)
+            closestSlot.SetActive(true);
+
+    }
+    public bool GetClosestHighlight(List<Slot> highlights, GameObject item, float treshold, out GameObject closestSlot)
+    {
+        var min = Mathf.Infinity;
+        closestSlot = null;
+
+        foreach (var (highlight, occupied) in highlights.Where(r => !r.isOccupied))
+        {
+            var dist = Vector3.Distance(item.transform.position, highlight.transform.position);
+            highlight.SetActive(false);
+            if (dist < min)
+            {
+                min = dist;
+                closestSlot = highlight;
+            }
+        }
+
+        if (min < treshold)
+            return true;
+
+        closestSlot = null;
+        return false;
+
     }
 
 }

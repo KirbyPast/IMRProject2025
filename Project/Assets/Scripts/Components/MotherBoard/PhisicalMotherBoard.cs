@@ -149,7 +149,7 @@ public class PhisicalMotherBoard : PhisicalPcComponent, IAttachableTo
             return true;
 
         closestSlot = null;
-        return true;
+        return false;
 
     }
 

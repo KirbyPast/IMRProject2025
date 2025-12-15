@@ -99,6 +99,21 @@ public class Storage : MonoBehaviour
             }
         ));
 
+        Components.Add(new Cooler(
+            Id: "7",
+            Name: "NH-D15",
+            Description: "Premium air cooler known for quiet operation and high thermal headroom.",
+            Manufacturer: "Noctua",
+            Model: "NH-D15",
+            Price: 99.95f,
+            Specs: new List<Spec> {
+                new ("Type", "Air"),
+                new ("Height", "14 mm"),
+                new ("TDP Rating", "≈220W"),
+                new ("Sockets", "AM5/AM4/LGA1700")
+            }
+        ));
+
         // ===== GPUs =====
 
         /*Components.Add(new Gpu(

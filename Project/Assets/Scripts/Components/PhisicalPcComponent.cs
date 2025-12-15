@@ -35,11 +35,12 @@ public class PhisicalPcComponent : MonoBehaviour
         mesh = Instantiate(prefab, transform);
         mesh.transform.localPosition = Vector3.zero;
 
-        material = Resources.Load<Material>($"materials/{thisComponent.ModelId}");
-        if (material == null)
-            material = Resources.Load<Material>("materials/empty");
+        //material = Resources.Load<Material>($"materials/{thisComponent.ModelId}");
+        //if (material == null)
+            //material = Resources.Load<Material>("materials/empty");
 
-        mesh.GetComponentInChildren<MeshRenderer>().material = material;
+        //mesh.GetComponentInChildren<MeshRenderer>().material = material;
+        //mesh.GetComponentInChildren<MeshRenderer>().material = material;
 
         Interactible = GetComponent<XRGrabInteractable>();
         Rigidbody = GetComponent<Rigidbody>();
@@ -80,7 +81,10 @@ public class PhisicalPcComponent : MonoBehaviour
         IgnoreColliders(this, to, true);
         AttachedTo = to;
         Attached = true;
+        SpecialAttatch();
     }
+
+    
 
     public void DeAttach()
     {
@@ -96,12 +100,15 @@ public class PhisicalPcComponent : MonoBehaviour
 
         OnDeAttach?.Invoke();
         OnDeAttach = null;
+
+        SpecialDeAttatch();
     }
 
-    public virtual void SpecialCreate()
-    {
+    public virtual void SpecialCreate() { }
 
-    }
+
+    public virtual void SpecialAttatch() { }
+    public virtual void SpecialDeAttatch() { }
 
     public virtual bool CheckCompleteness(out string missingPart)
     {
