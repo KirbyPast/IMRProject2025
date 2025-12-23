@@ -69,6 +69,23 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
                 );
             }
         };
+
+        Interactible.hoverEntered.AddListener((a) =>
+        {
+            Singleton.DetailsTab.gameObject.SetActive(true);
+            Singleton.DetailsTab.transform.position = transform.position + new Vector3(0, Singleton.DetailsTab.aboveTreshold, 0);
+            Singleton.DetailsTab.Create(this);
+        });
+
+        Interactible.hoverExited.AddListener((a) =>
+        {
+            try
+            {
+                Singleton.DetailsTab.gameObject.SetActive(false);
+            }
+            catch { }
+            
+        });
     }
 
     private void SpawnValidatorButton()

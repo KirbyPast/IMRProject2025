@@ -10,7 +10,8 @@ using VHACD.Unity;
 [RequireComponent(typeof(XRGrabInteractable), typeof(Rigidbody))]
 public class PhisicalPcComponent : MonoBehaviour
 {
-    private PcComponent thisComponent;
+    [HideInInspector]
+    public PcComponent thisComponent;
 
     [Header("Base component")] 
     public GameObject mesh;

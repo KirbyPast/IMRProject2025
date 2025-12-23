@@ -13,6 +13,12 @@ public class Singleton : MonoBehaviour
     public ViewPcComponentUI viewPcComponentUI;
     public static ViewPcComponentUI ViewPcComponentUI => Instance.viewPcComponentUI;
 
+    public DetailsTab detailsTab;
+    public static DetailsTab DetailsTab => Instance.detailsTab;
+
+    public GameObject player;
+    public static GameObject Player => Instance.player;
+
     private void Awake()
     {
         if (Instance == null)

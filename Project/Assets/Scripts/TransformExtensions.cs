@@ -254,5 +254,24 @@ public static class TransformExtensions
         return false;
     }
 
+    public static List<T> FindAllDeepChildren<T>(this Transform parent)
+    where T : Component
+    {
+        List<T> results = new();
+        FindAllDeepChildrenRecursive(parent, results);
+        return results;
+    }
 
+    private static void FindAllDeepChildrenRecursive<T>(
+        Transform parent,
+        List<T> results) where T : Component
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.TryGetComponent<T>(out var component))
+                results.Add(component);
+
+            FindAllDeepChildrenRecursive(child, results);
+        }
+    }
 }
