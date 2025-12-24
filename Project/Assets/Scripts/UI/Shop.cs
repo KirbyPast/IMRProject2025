@@ -5,20 +5,34 @@ using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Shop : MonoBehaviour
 {
     public PcComponentUI originalComponent;
     public List<PcComponentUI> allComponents = new();
     public GameObject originalPhisicalPcComponent; //Case, Cooler, Cpu, Gpu, Motherboard, Psu, Ram, Storage
-    public TMP_Dropdown D_Types, D_Order;
+
+    [Header("Filters")]
+    public TMP_Dropdown D_Types;
+    public TMP_Dropdown D_Order;
     public PriceInfo PI_Min, PI_Max;
     public TMP_InputField In_Search;
     public int CurrentTypeFilter = 0;
     public string CurrentSearchFilter;
-    public GameObject T_Empty;
+    
+    [Header("Pagination")]
     public Paginator P_Paginator;
     public int PageSize = 10;
+
+    [Header("UI Logic")]
+    public ScrollRect SR_PiecesRect;
+    public GameObject T_Empty;
+
+    [Header("Orders")]
+    public Orders Orders;
+
+
 
     private void Start()
     {
@@ -98,22 +112,23 @@ public class Shop : MonoBehaviour
     public void BuyComponent(PcComponentUI pcui, PcComponent pc)
     {
         print($"Buying: {pc.Name}");
-        Type componentType = pc switch
+
+        Orders.CreateOrder(pcui.thisComponent, () =>
         {
-            Case => typeof(PhisicalCase),
-            Cooler => typeof(PhisicalCooler),
-            Cpu => typeof(PhisicalCpu),
-            Gpu => typeof(PhisicalGpu),
-            MotherBoard => typeof(PhisicalMotherBoard),
-            Psu => typeof(PhisicalPsu),
-            Ram => typeof(PhisicalRam),
-            Drive => typeof(PhisicalStorage),
-            _ => typeof(PhisicalCase)
+            GenerateNewPhisicalPcComponent(pc switch
+            {
+                Case => typeof(PhisicalCase),
+                Cooler => typeof(PhisicalCooler),
+                Cpu => typeof(PhisicalCpu),
+                Gpu => typeof(PhisicalGpu),
+                MotherBoard => typeof(PhisicalMotherBoard),
+                Psu => typeof(PhisicalPsu),
+                Ram => typeof(PhisicalRam),
+                Drive => typeof(PhisicalStorage),
+                _ => typeof(PhisicalCase)
 
-        };
-
-        GenerateNewPhisicalPcComponent(componentType, pc);
-
+            }, pc);
+        }, 10);
     }
 
     public void GenerateNewPhisicalPcComponent(Type componentType, PcComponent pc)
@@ -126,6 +141,7 @@ public class Shop : MonoBehaviour
 
     void FilterAll()
     {
+        SR_PiecesRect.verticalNormalizedPosition = 1;
         string search = CurrentSearchFilter?.Trim() ?? string.Empty;
         float minPrice = PI_Min.Value;
         float maxPrice = PI_Max.Value;
