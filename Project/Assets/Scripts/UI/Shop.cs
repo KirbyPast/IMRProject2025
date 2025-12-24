@@ -12,6 +12,9 @@ public class Shop : MonoBehaviour
     public PcComponentUI originalComponent;
     public List<PcComponentUI> allComponents = new();
     public GameObject originalPhisicalPcComponent; //Case, Cooler, Cpu, Gpu, Motherboard, Psu, Ram, Storage
+    [Header("Money")]
+    public TMP_Text T_Money;
+    public float Money = 1000;
 
     [Header("Filters")]
     public TMP_Dropdown D_Types;
@@ -112,6 +115,7 @@ public class Shop : MonoBehaviour
     public void BuyComponent(PcComponentUI pcui, PcComponent pc)
     {
         print($"Buying: {pc.Name}");
+        ChangeMoney(-pc.Price);
 
         Orders.CreateOrder(pcui.thisComponent, () =>
         {
@@ -212,5 +216,11 @@ public class Shop : MonoBehaviour
         }
 
         return true;
+    }
+
+    public void ChangeMoney(float amount)
+    {
+        Money += amount;
+        T_Money.text = "$" + Money;
     }
 }

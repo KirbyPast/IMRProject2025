@@ -164,6 +164,13 @@ public class PhisicalMotherBoard : PhisicalPcComponent, IAttachableTo
     
     public override bool CheckCompleteness(out string missingPart)
     {
+        if (TEST_MODE)
+        {
+            missingPart = "";
+            return true;
+        }
+            
+
         // 1. Verificăm CPU
         if (!CpuMounted)
         {

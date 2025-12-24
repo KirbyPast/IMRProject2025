@@ -19,6 +19,10 @@ public class Singleton : MonoBehaviour
     public GameObject player;
     public static GameObject Player => Instance.player;
 
+    public Orders orders;
+    public static Orders Orders => Instance.orders;
+
+
     private void Awake()
     {
         if (Instance == null)

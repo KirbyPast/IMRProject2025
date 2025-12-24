@@ -4,12 +4,16 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Transformers;
 
 public class DetailsTab : MonoBehaviour
 {
+    public VerticalLayoutGroup DetailsLayout;
     public ComponentDetailUI OrgDetails;
     public List<ComponentDetailUI> AllDetails = new();
     public List<PhisicalPcComponent> AllChildrenComponents = new();
+    public PhisicalCase CurrentCase;
     public Button B_Complete;
     public Image I_Err;
     public TMP_Text T_Err;
@@ -30,6 +34,7 @@ public class DetailsTab : MonoBehaviour
     public void Create(PhisicalCase @case)
     {
         ResetDetails();
+        CurrentCase = @case;
 
         var allComponentChildren = @case.transform.FindAllDeepChildren<PhisicalPcComponent>();
         var grouped = FindAndGroupByType(allComponentChildren);
@@ -42,6 +47,15 @@ public class DetailsTab : MonoBehaviour
         {
             CreateDetail(pair.Value);
         }
+
+
+        StartCoroutine(ActionAfterTime(() => {
+            DetailsLayout.enabled = false;
+            StartCoroutine(ActionAfterTime(() => { 
+                DetailsLayout.enabled = true; 
+            }, 0.1f));
+        }, 0.1f));
+        
     }
 
     public void CreateDetail(List<PhisicalPcComponent> ppc)
@@ -87,7 +101,7 @@ public class DetailsTab : MonoBehaviour
                 I_Err.gameObject.SetActive(true);
                 T_Err.text = info;
 
-                StartCoroutine(ActionAfterTIme(() => {
+                StartCoroutine(ActionAfterTime(() => {
                     I_Err.gameObject.SetActive(false);
                 }, 2));
                 return;
@@ -99,10 +113,30 @@ public class DetailsTab : MonoBehaviour
 
     public void FinishBuild()
     {
-        print("Finishing build!");
+        if (CurrentCase == null)
+            return;
+
+        Singleton.Orders.CreateSoldOrder(AllChildrenComponents);
+
+        var allComponentChildren = CurrentCase.transform.FindAllDeepChildren<PhisicalPcComponent>();
+        foreach(var comp in allComponentChildren)
+        {
+            var colliders = comp.GetComponentsInChildren<Collider>();
+            var obj = comp.gameObject;
+            foreach (var c in colliders)
+            {
+                Destroy(c);
+            }
+
+            Destroy(comp);
+            Destroy(obj.GetComponent<XRGrabInteractable>());
+            Destroy(obj.GetComponent<XRGeneralGrabTransformer>());
+            Destroy(obj.GetComponent<Rigidbody>());
+                      
+        }
     }
 
-    private IEnumerator ActionAfterTIme(Action A, float time)
+    private IEnumerator ActionAfterTime(Action A, float time)
     {
         yield return new WaitForSeconds(time);
         A?.Invoke();

@@ -20,6 +20,7 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
     [Header("Case")]
     public bool MotherboardMounted = false;
     public bool PsuMounted = false;
+    public bool Completed = false;
 
     private void Start()
     {
@@ -186,6 +187,12 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
 
     public override bool CheckCompleteness(out string missingPart)
     {
+        if (TEST_MODE)
+        {
+            missingPart = "";
+            return true;
+        }
+
         if (!MotherboardMounted)
         {
             missingPart = "Motherboard is missing from the case!";
