@@ -22,6 +22,9 @@ public class Singleton : MonoBehaviour
     public Orders orders;
     public static Orders Orders => Instance.orders;
 
+    public Shop shop;
+    public static Shop Shop => Instance.shop;
+
 
     private void Awake()
     {

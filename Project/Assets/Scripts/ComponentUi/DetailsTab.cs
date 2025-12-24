@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -117,6 +118,7 @@ public class DetailsTab : MonoBehaviour
             return;
 
         Singleton.Orders.CreateSoldOrder(AllChildrenComponents);
+        Singleton.Shop.ChangeMoney(AllChildrenComponents.Sum(c => c.thisComponent.Price));
 
         var allComponentChildren = CurrentCase.transform.FindAllDeepChildren<PhisicalPcComponent>();
         foreach(var comp in allComponentChildren)
