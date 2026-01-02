@@ -102,6 +102,8 @@ public class Shop : MonoBehaviour
         P_Paginator.OnChange += (val) => { FilterAll(); };
 
         FilterAll();
+
+        ChangeMoney(0);
     }
 
     public void InstantiatComponentUI(PcComponent pc)

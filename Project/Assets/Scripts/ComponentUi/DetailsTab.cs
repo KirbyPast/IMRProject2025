@@ -15,7 +15,7 @@ public class DetailsTab : MonoBehaviour
     public List<ComponentDetailUI> AllDetails = new();
     public List<PhisicalPcComponent> AllChildrenComponents = new();
     public PhisicalCase CurrentCase;
-    public Button B_Complete;
+    public Button B_Complete, B_Sell;
     public Image I_Err;
     public TMP_Text T_Err;
     public float aboveTreshold = 2;
@@ -37,6 +37,8 @@ public class DetailsTab : MonoBehaviour
         ResetDetails();
         CurrentCase = @case;
 
+        PrepareSellButton(@case.Completed);
+        
         var allComponentChildren = @case.transform.FindAllDeepChildren<PhisicalPcComponent>();
         var grouped = FindAndGroupByType(allComponentChildren);
 
@@ -117,8 +119,7 @@ public class DetailsTab : MonoBehaviour
         if (CurrentCase == null)
             return;
 
-        Singleton.Orders.CreateSoldOrder(AllChildrenComponents);
-        Singleton.Shop.ChangeMoney(AllChildrenComponents.Sum(c => c.thisComponent.Price));
+        CurrentCase.Completed = true;       
 
         var allComponentChildren = CurrentCase.transform.FindAllDeepChildren<PhisicalPcComponent>();
         foreach(var comp in allComponentChildren)
@@ -130,17 +131,44 @@ public class DetailsTab : MonoBehaviour
                 Destroy(c);
             }
 
-            Destroy(comp);
-            Destroy(obj.GetComponent<XRGrabInteractable>());
-            Destroy(obj.GetComponent<XRGeneralGrabTransformer>());
-            Destroy(obj.GetComponent<Rigidbody>());
+            //Destroy(comp);
+            obj.GetComponent<XRGrabInteractable>().enabled = false;
+            obj.GetComponent<XRGeneralGrabTransformer>().enabled = false;
+            obj.GetComponent<Rigidbody>().isKinematic = true;
                       
         }
+
+        PrepareSellButton(true);
     }
 
     private IEnumerator ActionAfterTime(Action A, float time)
     {
         yield return new WaitForSeconds(time);
         A?.Invoke();
+    }
+
+    public void PrepareSellButton(bool state)
+    {
+        if (AllChildrenComponents.Count == 0 || CurrentCase == null)
+            return;
+
+        B_Sell.gameObject.SetActive(state);
+
+        if (!state)
+        {
+            return;
+        }
+
+        var sum = AllChildrenComponents.Sum(c => c.thisComponent.Price);
+        B_Sell.GetComponentInChildren<TMP_Text>().text = "Sell for $" + (sum + sum/10);
+
+        B_Sell.onClick.RemoveAllListeners();
+        B_Sell.onClick.AddListener(() =>
+        {
+            Singleton.Orders.CreateSoldOrder(AllChildrenComponents);
+            Singleton.Shop.ChangeMoney(sum + sum/10);
+            CurrentCase.gameObject.SetActive(false);
+        });
+
     }
 }

@@ -1119,6 +1119,7 @@ MonoBehaviour:
   detailsTab: {fileID: 918532371}
   player: {fileID: 1097503188}
   orders: {fileID: 320624221}
+  shop: {fileID: 173768141}
 --- !u!4 &78791237
 Transform:
   m_ObjectHideFlags: 0

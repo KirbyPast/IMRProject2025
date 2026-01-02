@@ -46,7 +46,7 @@ public class ComponentDetailUI : MonoBehaviour
     public void CreateComponentDetailInfo(PcComponent pc)
     {
         var newInfo = Instantiate(OrgInfo, transform);
-        string info = pc.Name + "\n\n" + pc.Description + "\n\n" + string.Join("\n-", pc.Specs);
+        string info = pc.Name + "\n\n" + pc.Description + "\n\n" + string.Join("\n-", pc.Specs) + "\n\n$" + pc.Price;
         newInfo.Create(info);
         newInfo.gameObject.SetActive(true);
         AllOrgInfos.Add(newInfo);
