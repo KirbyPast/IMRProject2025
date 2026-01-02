@@ -11,7 +11,7 @@ public class SoldOrderUI : MonoBehaviour
     public void Create(List<PhisicalPcComponent> components, int ind)
     {
         T_Title.text = "Sale #" + ind;
-        T_Price.text = "Total: $" + components.Sum(c => c.thisComponent.Price);
+        T_Price.text = "Total: $" + (components.Sum(c => c.thisComponent.Price) + components.Sum(c => c.thisComponent.Price) / 10);
 
         foreach (var pc in components)
         {
