@@ -30,3 +30,16 @@ Week 9:
 
 
 link video: https://drive.google.com/file/d/1vKrUUZGUEiz7vPDitfNyuRRRDoGibpdF/view
+
+Week 12:
+-adaugat functionalitatea de vanzare
+
+-simulat timp de livrare
+
+-refolosit monitorul mare ca si consola pt sell/livrari
+
+-adaugat bani
+
+-gameplay loop-ul este acum complet, tot ce mai avem de facut sunt rafinari (sfx, vfx, questing maybe)
+
+link video: https://drive.google.com/file/d/1sIKJhxOs8jJZq4hVWeESzvS4kfU7WaU5/view?usp=sharing
