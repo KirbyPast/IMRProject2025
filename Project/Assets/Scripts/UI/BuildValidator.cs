@@ -37,12 +37,14 @@ public class BuildValidator : MonoBehaviour
         if (targetCase.CheckCompleteness(out string missingPart))
         {
             // SUCCES
+            AudioManager.Play("BootSuccess");
             Debug.Log("Build Complete!");
             UpdateFeedback("Success! Booting...", Color.green);
         }
         else
         {
             // EROARE
+            AudioManager.Play("BootFail");
             Debug.Log("Build Incomplete: " + missingPart);
             UpdateFeedback(missingPart, Color.red);
         }

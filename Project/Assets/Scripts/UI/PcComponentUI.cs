@@ -18,8 +18,21 @@ public class PcComponentUI : MonoBehaviour
         T_Description.text = component.Description;
         T_Price.text = component.Price.ToString();
 
-        B_Buy.onClick.AddListener(() => { s.BuyComponent(this, thisComponent); });
-        B_View.onClick.AddListener(() => { Singleton.ViewPcComponentUI.gameObject.SetActive(true); Singleton.ViewPcComponentUI.Create(this); });
+        B_Buy.onClick.RemoveAllListeners();
+        B_View.onClick.RemoveAllListeners();
+
+        B_Buy.onClick.AddListener(() =>
+        {
+            AudioManager.Play("buy");
+            s.BuyComponent(this, thisComponent);
+        });
+
+        B_View.onClick.AddListener(() =>
+        {
+            AudioManager.Play("mclick");
+            Singleton.ViewPcComponentUI.gameObject.SetActive(true);
+            Singleton.ViewPcComponentUI.Create(this);
+        });
 
         I_Sprite.sprite = Resources.Load<Sprite>($"images/{component.ModelId}");       
     }

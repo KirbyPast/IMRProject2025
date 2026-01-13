@@ -85,6 +85,7 @@ public class PhisicalPcComponent : MonoBehaviour
         AttachedTo = to;
         Attached = true;
         SpecialAttatch();
+        AudioManager.Play("Click");
     }
 
     

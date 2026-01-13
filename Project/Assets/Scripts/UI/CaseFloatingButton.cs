@@ -30,6 +30,7 @@ public class CaseFloatingButton : MonoBehaviour
 
         if (linkedCase.CheckCompleteness(out string missingPart))
         {
+            AudioManager.Play("BootSuccess");
             UpdateText("Success! Booting...", Color.green);
             Debug.Log("Build Complete for " + linkedCase.name);
 
@@ -38,6 +39,7 @@ public class CaseFloatingButton : MonoBehaviour
         }
         else
         {
+            AudioManager.Play("BootFail");
             UpdateText(missingPart, Color.red);
             Debug.Log("Incomplete: " + missingPart);
         }

@@ -225,4 +225,20 @@ public class Shop : MonoBehaviour
         Money += amount;
         T_Money.text = "$" + Money;
     }
+
+    public void Play()
+    {
+        AudioManager.Play("mclick");AudioManager.Play("mclick");
+    }
+
+    public void PlayKeyboard()
+    {
+        AudioManager.Play("keyboard");
+    }
+
+    public void SellAudio()
+    {
+        AudioManager.Play("sell");
+    }
+
 }
