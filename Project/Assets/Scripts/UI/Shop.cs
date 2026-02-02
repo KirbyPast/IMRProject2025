@@ -14,7 +14,7 @@ public class Shop : MonoBehaviour
     public GameObject originalPhisicalPcComponent; //Case, Cooler, Cpu, Gpu, Motherboard, Psu, Ram, Storage
     [Header("Money")]
     public TMP_Text T_Money;
-    public float Money = 1000;
+    public float Money = 10000;
 
     [Header("Filters")]
     public TMP_Dropdown D_Types;

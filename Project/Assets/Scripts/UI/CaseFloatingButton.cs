@@ -22,24 +22,19 @@ public class CaseFloatingButton : MonoBehaviour
 
     void ValidateLinkedCase()
     {
-        if (linkedCase == null)
+        void ValidateLinkedCase()
         {
-            UpdateText("Error: Disconnected", Color.red);
-            return;
-        }
+            if (linkedCase == null) return;
 
-        if (linkedCase.CheckCompleteness(out string missingPart))
-        {
-            UpdateText("Success! Booting...", Color.green);
-            Debug.Log("Build Complete for " + linkedCase.name);
-
-            // Optional: Hide button after success?
-            // gameObject.SetActive(false); 
-        }
-        else
-        {
-            UpdateText(missingPart, Color.red);
-            Debug.Log("Incomplete: " + missingPart);
+            if (QuestManager.Instance.TrySubmitBuild(linkedCase, out string error))
+            {
+                UpdateText("Quest Complete!", Color.green);
+                // Maybe disable the PC or move it to a "Shipping" area here
+            }
+            else
+            {
+                UpdateText(error, Color.red);
+            }
         }
     }
 

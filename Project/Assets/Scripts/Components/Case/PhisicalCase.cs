@@ -187,11 +187,11 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
 
     public override bool CheckCompleteness(out string missingPart)
     {
-        if (TEST_MODE)
+        /*if (TEST_MODE)
         {
             missingPart = "";
             return true;
-        }
+        }*/
 
         if (!MotherboardMounted)
         {

@@ -114,6 +114,53 @@ public class Storage : MonoBehaviour
             }
         ));
 
+        Components.Add(new Gpu(
+            Id: "8",
+            Name: "ASUS ROG MARS 760",
+            Description: "A rare dual-GPU card featuring two GTX 760 cores on a single PCB. Outperformed the GTX Titan at launch.",
+            Price: 629.99f,
+            Manufacturer: "ASUS",
+            Maker: "NVIDIA",
+            Model: "MARS 760",
+            Specs: new List<Spec> {
+                new ("VRAM", "4 GB GDDR5 (2GB x 2)"),
+                new ("Game/Boost", "1006 / 1072 MHz"),
+                new ("TBP", "300W (2x 8-pin)"),
+                new ("Outputs", "2x DVI, 1x HDMI, 1x DP")
+            }
+        ));
+
+        Components.Add(new Cpu(
+            Id: "9",
+            Name: "AMD Ryzen 5 1600X",
+            Description: "First-generation Zen architecture processor. Delivers 6 cores and 12 threads for solid multi-tasking performance on the AM4 platform.",
+            Price: 149.99f,
+            Manufacturer: "AMD",
+            Model: "Ryzen 5 1600X",
+            specs: new List<Spec> {
+                new ("Socket", "AM4"),
+                new ("Cores/Threads", "6C / 12T"),
+                new ("Base/Boost", "3.6 / 4.0 GHz"),
+                new ("TDP", "95W"),
+                new ("L3 Cache", "16MB")
+            }
+        ));
+
+        Components.Add(new Ram(
+            Id: "10",
+            Name: "Kingston HyperX Fury 16GB DDR4-3200",
+            Description: "Plug N Play automatic overclocking. Features a low-profile heat spreader design compatible with large CPU air coolers.",
+            Manufacturer: "Kingston",
+            Model: "HX432C16FB3/16",
+            Price: 49.99f,
+            Specs: new List<Spec> {
+                new ("Capacity", "16 GB"),
+                new ("Speed", "DDR4-3200"),
+                new ("CAS", "CL16"),
+                new ("Voltage", "1.35V")
+            }
+        ));
+
         // ===== GPUs =====
 
         /*Components.Add(new Gpu(

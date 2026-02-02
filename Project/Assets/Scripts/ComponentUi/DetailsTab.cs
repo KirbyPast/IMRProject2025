@@ -97,7 +97,17 @@ public class DetailsTab : MonoBehaviour
 
     public void VerifyAll()
     {
-        foreach(var comp in AllChildrenComponents)
+
+        if(!CurrentCase.CheckCompleteness(out var caseInfo))
+        {
+            I_Err.gameObject.SetActive(true);
+            T_Err.text = caseInfo;
+            StartCoroutine(ActionAfterTime(() => {
+                I_Err.gameObject.SetActive(false);
+            }, 2));
+            return;
+        }
+        foreach (var comp in AllChildrenComponents)
         {
             if(!comp.CheckCompleteness(out var info))
             {
@@ -154,21 +164,26 @@ public class DetailsTab : MonoBehaviour
 
         B_Sell.gameObject.SetActive(state);
 
-        if (!state)
-        {
-            return;
-        }
+        if (!state) return;
 
-        var sum = AllChildrenComponents.Sum(c => c.thisComponent.Price);
-        B_Sell.GetComponentInChildren<TMP_Text>().text = "Sell for $" + (sum + sum/10);
+        B_Sell.GetComponentInChildren<TMP_Text>().text = "Complete Quest";
 
         B_Sell.onClick.RemoveAllListeners();
         B_Sell.onClick.AddListener(() =>
         {
-            Singleton.Orders.CreateSoldOrder(AllChildrenComponents);
-            Singleton.Shop.ChangeMoney(sum + sum/10);
-            CurrentCase.gameObject.SetActive(false);
+            if (QuestManager.Instance.TrySubmitBuild(CurrentCase, out string failReason))
+            {
+                CurrentCase.gameObject.SetActive(false);
+                gameObject.SetActive(false); // Close the UI tab
+            }
+            else
+            {
+                I_Err.gameObject.SetActive(true);
+                T_Err.text = failReason;
+                StartCoroutine(ActionAfterTime(() => {
+                    I_Err.gameObject.SetActive(false);
+                }, 3f));
+            }
         });
-
     }
 }

@@ -1,0 +1,3269 @@
+This file is a merged representation of a subset of the codebase, containing specifically included files and files not matching ignore patterns, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: **/*.cs
+- Files matching these patterns are excluded: **/TextMesh Pro/**, **/Pixelplacement/**, **/QuickOutline/**, **/XRI/**, **/XR/**, **/Samples/**, **/*.meta
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+Project/Assets/Scripts/Audio/AudioManager.cs
+Project/Assets/Scripts/Audio/BackgroundMusic.cs
+Project/Assets/Scripts/Audio/FadeAudioSource.cs
+Project/Assets/Scripts/Audio/Sound.cs
+Project/Assets/Scripts/Components/Case/Case.cs
+Project/Assets/Scripts/Components/Case/PhisicalCase.cs
+Project/Assets/Scripts/Components/Cooler/Cooler.cs
+Project/Assets/Scripts/Components/Cooler/PhisicalCooler.cs
+Project/Assets/Scripts/Components/Cpu/Cpu.cs
+Project/Assets/Scripts/Components/Cpu/PhisicalCpu.cs
+Project/Assets/Scripts/Components/Gpu/Gpu.cs
+Project/Assets/Scripts/Components/Gpu/PhisicalGpu.cs
+Project/Assets/Scripts/Components/MotherBoard/MotherBoard.cs
+Project/Assets/Scripts/Components/MotherBoard/PhisicalMotherBoard.cs
+Project/Assets/Scripts/Components/PcComponent.cs
+Project/Assets/Scripts/Components/PhisicalPcComponent.cs
+Project/Assets/Scripts/Components/Psu/PhisicalPsu.cs
+Project/Assets/Scripts/Components/Psu/Psu.cs
+Project/Assets/Scripts/Components/Ram/PhisicalRam.cs
+Project/Assets/Scripts/Components/Ram/Ram.cs
+Project/Assets/Scripts/Components/Spec.cs
+Project/Assets/Scripts/Components/Storage/Drive.cs
+Project/Assets/Scripts/Components/Storage/PhisicalStorage.cs
+Project/Assets/Scripts/ComponentUi/ComponentDetailInfoUI.cs
+Project/Assets/Scripts/ComponentUi/ComponentDetailUI.cs
+Project/Assets/Scripts/ComponentUi/DetailsTab.cs
+Project/Assets/Scripts/ItemGrabManager.cs
+Project/Assets/Scripts/Quest.cs
+Project/Assets/Scripts/QuestDisplayUI.cs
+Project/Assets/Scripts/QuestManager.cs
+Project/Assets/Scripts/RemoveAllComponentsFromGameObject.cs
+Project/Assets/Scripts/Singleton.cs
+Project/Assets/Scripts/Storage.cs
+Project/Assets/Scripts/TransformExtensions.cs
+Project/Assets/Scripts/UI/BuildValidator.cs
+Project/Assets/Scripts/UI/CaseFloatingButton.cs
+Project/Assets/Scripts/UI/Orders.cs
+Project/Assets/Scripts/UI/Paginator.cs
+Project/Assets/Scripts/UI/PcComponentUI.cs
+Project/Assets/Scripts/UI/PriceInfo.cs
+Project/Assets/Scripts/UI/PurchasedOrderUI.cs
+Project/Assets/Scripts/UI/Shop.cs
+Project/Assets/Scripts/UI/SoldOrderUI.cs
+Project/Assets/Scripts/UI/SpecUI.cs
+Project/Assets/Scripts/UI/ViewPcComponentUI.cs
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="Project/Assets/Scripts/Quest.cs">
+using System.Collections.Generic;
+
+[System.Serializable]
+public class Quest
+{
+    public string clientName;
+    public string description;
+    public float reward;
+    public List<string> requiredModelIds = new List<string>();
+    public bool requiresFans;
+    public string requiredCpuName;
+    public string requiredGpuName;
+    public string requiredRamName;
+    public string requiredMbName;
+    public string requiredPsuName;
+
+    public Quest(string name, string desc, float money, List<string> modelIds, bool fans,
+                     string cpu, string gpu, string ram, string mb, string psu)
+    {
+        clientName = name;
+        description = desc;
+        reward = money;
+        requiredModelIds = modelIds;
+        requiresFans = fans;
+        requiredCpuName = cpu;
+        requiredGpuName = gpu;
+        requiredRamName = ram;
+        requiredMbName = mb;
+        requiredPsuName = psu;
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/QuestDisplayUI.cs">
+using UnityEngine;
+using TMPro;
+using System.Linq;
+
+public class QuestDisplayUI : MonoBehaviour
+{
+    [Header("Current Quest UI")]
+    public TextMeshProUGUI clientText;
+    public TextMeshProUGUI cpuTrackerText;
+    public TextMeshProUGUI gpuTrackerText;
+    public TextMeshProUGUI fanTrackerText;
+    public TextMeshProUGUI mbTrackerText;
+    public TextMeshProUGUI ramTrackerText;
+    public TextMeshProUGUI psuTrackerText;
+    public TextMeshProUGUI rewardText;
+
+
+    private void Start()
+    {
+        QuestManager.Instance.OnQuestChanged += UpdateActiveQuestUI;
+
+    }
+
+    void Update()
+    {
+        // Real-time tracking: Only run if a PC is on the bench
+        UpdatePartTracking();
+    }
+
+    void UpdateActiveQuestUI(Quest q)
+    {
+        clientText.text = $"Client: {q.clientName}";
+        rewardText.text = $"Reward: <color=#00FF00>${q.reward:F2}</color>";
+        // Initial text for trackers
+        cpuTrackerText.text = $"[ ] {q.requiredCpuName}";
+        gpuTrackerText.text = $"[ ] {q.requiredGpuName}";
+        mbTrackerText.text = $"[ ] {q.requiredMbName}";
+        ramTrackerText.text = $"[ ] {q.requiredRamName}";
+        psuTrackerText.text = $"[ ] {q.requiredPsuName}";
+        fanTrackerText.text = q.requiresFans ? "[ ] Cooling Fans" : "Fans: Optional";
+    }
+
+    void UpdatePartTracking()
+    {
+        if (QuestManager.Instance.currentQuest == null) return;
+        PhisicalCase activeCase = FindObjectOfType<PhisicalCase>();
+        if (activeCase == null) return;
+
+        var installedParts = activeCase.GetComponentsInChildren<PhisicalPcComponent>();
+        var q = QuestManager.Instance.currentQuest;
+
+        // Helper to update text color based on presence
+        void UpdateStatus(TextMeshProUGUI label, string partName)
+        {
+            bool hasPart = installedParts.Any(p => p.thisComponent?.Name == partName);
+            label.text = hasPart ? $"<color=green>[✔] {partName}</color>" : $"[ ] {partName}";
+        }
+
+        UpdateStatus(cpuTrackerText, q.requiredCpuName);
+        UpdateStatus(gpuTrackerText, q.requiredGpuName);
+        UpdateStatus(mbTrackerText, q.requiredMbName);
+        UpdateStatus(ramTrackerText, q.requiredRamName);
+        UpdateStatus(psuTrackerText, q.requiredPsuName);
+        if (q.requiresFans)
+        {
+            bool hasFans = installedParts.Any(p => p is PhisicalCooler || p.thisComponent is Cooler);
+
+            fanTrackerText.text = hasFans
+                ? "<color=green>[✔] Cooling Fans</color>"
+                : "[ ] Cooling Fans";
+        }
+        else
+        {
+            fanTrackerText.text = "Fans: Optional";
+        }
+    }
+
+
+}
+</file>
+
+<file path="Project/Assets/Scripts/QuestManager.cs">
+using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
+
+public class QuestManager : MonoBehaviour
+{
+    [Header("Settings")]
+    public float rewardMarkup = 4.0f;
+
+    public static QuestManager Instance;
+    public Quest currentQuest;
+ 
+
+    public System.Action<Quest> OnQuestChanged;
+
+
+    private void Awake() => Instance = this;
+    private void Start() => GenerateNewQuest();
+
+    public void GenerateNewQuest()
+    {
+        string[] names = { "CyberPunk_Pro", "BudgetBob", "RenderFarm_Inc", "TechLover88" };
+        string client = names[Random.Range(0, names.Length)];
+
+        List<string> reqIds = new List<string>();
+        float totalCost = 0;
+
+        T PickPart<T>(out string partName) where T : PcComponent
+        {
+            var pool = Storage.Components.OfType<T>().ToList();
+            if (pool.Count > 0)
+            {
+                var picked = pool[Random.Range(0, pool.Count)];
+                reqIds.Add(picked.ModelId);
+                totalCost += picked.Price;
+                partName = picked.Name;
+                return picked;
+            }
+            partName = "Any " + typeof(T).Name;
+            return null;
+        }
+
+        PickPart<Cpu>(out string cpu);
+        PickPart<Gpu>(out string gpu);
+        PickPart<Ram>(out string ram);
+        PickPart<MotherBoard>(out string mb);
+        PickPart<Psu>(out string psu);
+
+        bool needsFans = Random.value > 0.5f;
+        string desc = $"Build a PC with: {cpu}, {gpu}, {ram}, {mb}, and {psu}.";
+
+        currentQuest = new Quest(client, desc, totalCost * rewardMarkup, reqIds, needsFans, cpu, gpu, ram, mb, psu);
+        OnQuestChanged?.Invoke(currentQuest);
+    }
+
+    public bool TrySubmitBuild(PhisicalCase pcCase, out string failReason)
+    {
+        // 1. Check if the PC even boots (Basic hardware check)
+        if (!pcCase.CheckCompleteness(out failReason))
+        {
+            return false;
+        }
+
+        // 2. Get all components currently attached to the case/motherboard
+        var installedParts = pcCase.GetComponentsInChildren<PhisicalPcComponent>();
+
+        // 3. Validate specific Model IDs
+        foreach (var reqId in currentQuest.requiredModelIds)
+        {
+            bool hasPart = installedParts.Any(p => p.thisComponent != null && p.thisComponent.ModelId == reqId);
+            if (!hasPart)
+            {
+                failReason = $"Missing required component ID: {reqId}";
+                return false;
+            }
+        }
+
+        // 4. Validate Fans (Coolers)
+        if (currentQuest.requiresFans)
+        {
+            int fanCount = pcCase.FanSlots.Count(s => s.isOccupied);
+            if (fanCount == 0)
+            {
+                failReason = "Client specifically asked for cooling fans!";
+                return false;
+            }
+        }
+
+        // Success!
+        CompleteQuest();
+        return true;
+    }
+
+    public void CompleteQuest()
+    {
+
+        Singleton.Shop.ChangeMoney(currentQuest.reward);
+        GenerateNewQuest();
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/UI/CaseFloatingButton.cs">
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+public class CaseFloatingButton : MonoBehaviour
+{
+    [Header("UI References")]
+    public TextMeshProUGUI statusText;
+    public Button actionButton;
+
+    private PhisicalCase linkedCase;
+
+    public void Initialize(PhisicalCase caseScript)
+    {
+        linkedCase = caseScript;
+
+        if (actionButton != null)
+        {
+            actionButton.onClick.AddListener(ValidateLinkedCase);
+        }
+    }
+
+    void ValidateLinkedCase()
+    {
+        void ValidateLinkedCase()
+        {
+            if (linkedCase == null) return;
+
+            if (QuestManager.Instance.TrySubmitBuild(linkedCase, out string error))
+            {
+                UpdateText("Quest Complete!", Color.green);
+                // Maybe disable the PC or move it to a "Shipping" area here
+            }
+            else
+            {
+                UpdateText(error, Color.red);
+            }
+        }
+    }
+
+    void UpdateText(string message, Color color)
+    {
+        if (statusText != null)
+        {
+            statusText.text = message;
+            statusText.color = color;
+        }
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/Audio/AudioManager.cs">
+using System;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
+public class AudioManager : MonoBehaviour
+{
+    private static List<string> pausedSounds = new List<string>();
+    public Sound[] sounds;
+    public static AudioManager Instance;
+    [Range(0f, 1f)]
+
+#if UNITY_ANDROID
+    public static bool IsPc = false;
+#elif UNITY_STANDALONE_WIN
+    public static bool IsPc = true;
+#endif
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+
+        foreach (Sound s in sounds)
+        {
+            s.source = gameObject.AddComponent<AudioSource>();
+            s.source.clip = s.clip;
+
+            s.source.loop = s.loop;
+            s.source.playOnAwake = false;
+        }
+    }
+
+
+
+    void Update()
+    {
+       
+    }
+
+    public static void UpdateVolume()
+    {
+        foreach (Sound s in Instance.sounds)
+        {
+            if (s.RespectVolume)
+            {
+                s.source.volume = (float)(!s.SoundEffect ? PlayerPrefs.GetFloat("Volume") : PlayerPrefs.GetFloat("SoundEffects")) * s.VolumeMultiplier;
+            }
+        }
+    }
+
+    public AudioSource GetSoundByName(string name)
+    {
+        Sound d = Array.Find(sounds, sound => sound.name == name);
+
+        return d.source;
+    }
+
+    public void ChangeSoundVolume(string name, float volume)
+    {
+        Sound d = Array.Find(sounds, sound => sound.name == name);
+        if (d == null)
+            return;
+
+        d.source.volume = volume;
+    }
+
+    public void PlaySound(string name)
+    {
+        //Debug.Log("se incearca: " + name);
+
+        Sound d = Array.Find(sounds, sound => sound.name == name);
+        if (d == null)
+            return;
+
+        //Debug.Log("se playeaza: " + name);
+        //d.source.pitch = 1f;
+        d.source.Play();
+    }
+
+    public void PauseSound(string name)
+    {
+        Sound d = Array.Find(sounds, sound => sound.name == name);
+        if (d == null)
+            return;
+
+        //d.source.pitch = 1f;
+        d.source.Pause();
+    }
+
+    public void UnPauseSound(string name)
+    {
+        Sound d = Array.Find(sounds, sound => sound.name == name);
+        if (d == null)
+            return;
+
+        //d.source.pitch = 1f;
+        d.source.UnPause();
+    }
+    public void PlayReversedSound(string name)
+    {
+        Sound d = Array.Find(sounds, sound => sound.name == name);
+        if (d == null)
+            return;
+
+        d.source.pitch = -1;
+        d.source.Play();
+    }
+    public void StopSound(string name)
+    {
+        Sound d = Array.Find(sounds, sound => sound.name == name);
+        if (d == null)
+            return;
+
+        d.source.Stop();
+    }
+    public void StopAllSounds()
+    {
+        foreach (Sound s in sounds)
+        {
+            s.source.Stop();
+        }
+    }
+    public bool IsPlayingSound(string name)
+    {
+        Sound d = Array.Find(sounds, sound => sound.name == name);
+        return d.source.isPlaying;
+    }
+
+
+    public static AudioSource GetSound(string name)
+    {
+        return Instance.GetSoundByName(name);
+    }
+
+    public static void Play(string name)
+    {
+        try
+        {
+             Instance.PlaySound(name);
+
+        }
+        catch (NullReferenceException)
+        {
+            Debug.LogWarning("Entering game from level scene will lead to loss of Audio and is not reccomended!");
+        }
+
+    }
+
+    public static void ChangeVolume(string name, float volume)
+    {
+        Instance.ChangeSoundVolume(name, volume);
+    }
+
+    public static void Stop(string name)
+    {
+        try
+        {
+            Instance.StopSound(name);
+        }
+        catch (NullReferenceException)
+        {
+            Debug.LogWarning("Entering game from level scene will lead to loss of Audio and is not reccomended!");
+        }
+    }
+    public static void StopAll()
+    {
+        try
+        {
+            Instance.StopAllSounds();
+        }
+        catch (NullReferenceException)
+        {
+            Debug.LogWarning("Entering game from level scene will lead to loss of Audio and is not reccomended!");
+        }
+    }
+
+    public static bool IsPlaying(string name)
+    {
+        try
+        {
+            return Instance.IsPlayingSound(name);
+        }
+        catch(NullReferenceException)
+        {
+            Debug.LogWarning("Entering game from level scene will lead to loss of Audio and is not reccomended!");
+        }
+        return false;
+    }
+
+    public static void Pause(string name)
+    {
+        try
+        {
+            Instance.PauseSound(name);
+
+        }
+        catch (NullReferenceException)
+        {
+            Debug.LogWarning("Entering game from level scene will lead to loss of Audio and is not reccomended!");
+        }
+
+    }
+
+    public static void UnPause(string name)
+    {
+        try
+        {
+            Instance.UnPauseSound(name);
+
+        }
+        catch (NullReferenceException)
+        {
+            Debug.LogWarning("Entering game from level scene will lead to loss of Audio and is not reccomended!");
+        }
+
+    }
+
+    public static void PauseAll()
+    {
+        pausedSounds.Clear(); // Resetãm lista
+        foreach (Sound s in Instance.sounds)
+        {
+            if (s.source.isPlaying)
+            {
+                s.source.Pause();
+                pausedSounds.Add(s.name);
+            }
+        }
+    }
+
+    public static void UnPauseAll()
+    {
+        foreach (string soundName in pausedSounds)
+        {
+            Sound s = Array.Find(Instance.sounds, sound => sound.name == soundName);
+            if (s != null)
+            {
+                s.source.UnPause();
+            }
+        }
+        pausedSounds.Clear();
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/Audio/BackgroundMusic.cs">
+using System;
+using System.Collections;
+using UnityEngine;
+
+public class BackgroundMusic : MonoBehaviour
+{
+    public static BackgroundMusic Instance;
+
+    public string[] musicTrackNames;
+    public string bossMusic;
+    private int currentTrackIndex = 0;
+    private AudioSource currentSource;
+    public bool isBossFight = false;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    void Start()
+    {
+        if (musicTrackNames.Length == 0)
+        {
+            Debug.LogWarning("No music tracks assigned!");
+            return;
+        }
+
+        PlayNextTrack();
+    }
+
+    void Update()
+    {
+        if (currentSource != null && !currentSource.isPlaying)
+        {
+            if (!isBossFight)
+                PlayNextTrack();
+            else
+            {
+                PlayBossTrack();
+            }
+        }
+    }
+
+    public void StopBackgroundMusic()
+    {
+        currentSource.Stop();
+    }
+
+    public void PlayBossTrack()
+    {
+        isBossFight = true;
+        StopBackgroundMusic();
+        currentSource = AudioManager.GetSound(bossMusic);
+
+        if (currentSource == null)
+        {
+            return;
+        }
+        currentSource.Play();
+    }
+
+    private void PlayNextTrack()
+    {
+        string nextTrackName = musicTrackNames[currentTrackIndex];
+        currentSource = AudioManager.GetSound(nextTrackName);
+
+        if (currentSource == null)
+        {
+            Debug.LogWarning("nu exista: " + nextTrackName);
+            return;
+        }
+
+        currentSource.Play();
+        currentTrackIndex = (currentTrackIndex + 1) % musicTrackNames.Length;
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/Audio/FadeAudioSource.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+public static class FadeAudioSource
+{
+    public static void StartFade(AudioSource audioSource, float duration, float targetVolume)
+    {
+        float currentTime = 0;
+        float start = audioSource.volume;
+        while (currentTime < duration)
+        {
+            currentTime += Time.deltaTime;
+            audioSource.volume = Mathf.Lerp(start, targetVolume, currentTime / duration);
+            //yield return null;
+        }
+        audioSource.Pause();
+        //yield break;
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/Audio/Sound.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Audio;
+
+[System.Serializable]
+public class Sound
+{
+    public string name;
+    
+    public AudioClip clip;
+
+    public bool loop;
+
+    public bool RespectVolume;
+    public bool SoundEffect = true;
+
+    [HideInInspector]
+    public AudioSource source;
+
+    [Range(0f, 1f)]
+    public float VolumeMultiplier = 1f;
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/Case/Case.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Case : PcComponent
+{
+    public Case(string Id, string Name, string Description, string Manufacturer, string Model, float Price, List<Spec> Specs) : base(Id, Name, Description, Manufacturer, Model, Price, Specs)
+    {
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/Cooler/Cooler.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[System.Serializable]
+public class Cooler : PcComponent
+{
+    public Cooler(string Id, string Name, string Description, string Manufacturer, string Model, float Price, List<Spec> Specs) : base(Id, Name, Description, Manufacturer, Model, Price, Specs)
+    {
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/Cpu/Cpu.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[System.Serializable]
+public class Cpu : PcComponent
+{
+    public Cpu(string Id, string Name, string Description, float Price, string Manufacturer, string Model, List<Spec> specs, Vector3 offset = default)
+        : base(Id, Name, Description, Manufacturer, Model, Price, specs)
+    {
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/Cpu/PhisicalCpu.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PhisicalCpu : PhisicalPcComponent
+{
+
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/Gpu/Gpu.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+[System.Serializable]
+public class Gpu : PcComponent
+{
+    public string Maker;    
+
+    public Gpu(string Id, string Name, string Description, float Price, string Manufacturer, string Maker, string Model, List<Spec> Specs) : base(Id, Name, Description, Manufacturer, Model, Price, Specs)
+    {
+        this.Maker = Maker;
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/Gpu/PhisicalGpu.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PhisicalGpu : PhisicalPcComponent
+{
+
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/MotherBoard/MotherBoard.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[System.Serializable]
+public class MotherBoard : PcComponent
+{
+    public MotherBoard(string Id, string Name, string Description, string Manufacturer, string Model, float Price, List<Spec> Specs) : base(Id, Name, Description, Manufacturer, Model, Price, Specs)
+    {
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/PcComponent.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[System.Serializable]
+public class PcComponent
+{
+    public string ModelId;
+    public string Name;
+    public string Description;
+    public string Manufacturer;
+    public string Model;
+    public float Price;
+    public List<Spec> Specs = new();
+
+    public PcComponent(string Id, string Name, string Description, string Manufacturer, string Model, float Price, List<Spec> Specs)
+    {
+        this.ModelId = Id;
+        this.Name = Name;
+        this.Manufacturer = Manufacturer;
+        this.Price = Price;
+        this.Model = Model;
+        this.Specs = Specs;
+        this.Description = Description;
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/Psu/PhisicalPsu.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PhisicalPsu : PhisicalPcComponent
+{
+
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/Psu/Psu.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[System.Serializable]
+public class Psu : PcComponent
+{
+    public Psu(string Id, string Name, string Description, string Manufacturer, string Model, float Price, List<Spec> Specs) : base(Id, Name, Description, Manufacturer, Model, Price, Specs)
+    {
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/Ram/PhisicalRam.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PhisicalRam : PhisicalPcComponent
+{
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/Ram/Ram.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[System.Serializable]
+public class Ram : PcComponent
+{
+    public Ram(string Id, string Name, string Description, string Manufacturer, string Model, float Price, List<Spec> Specs) : base(Id, Name, Description, Manufacturer, Model, Price, Specs)
+    {
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/Spec.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[System.Serializable]
+public class Spec
+{
+    public string Name;
+    public string Value;
+    public Spec(string name, string value)
+    {
+        Name = name;
+        Value = value;
+    }
+
+    public override string ToString()
+    {
+        return Name+ ": " + Value;
+    }
+
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/Storage/Drive.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[System.Serializable]
+public class Drive : PcComponent
+{
+    public Drive(string Id, string Name, string Description, string Manufacturer, string Model, float Price, List<Spec> Specs) : base(Id, Name, Description, Manufacturer, Model, Price, Specs)
+    {
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/Storage/PhisicalStorage.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PhisicalStorage : PhisicalPcComponent
+{
+
+}
+</file>
+
+<file path="Project/Assets/Scripts/ComponentUi/ComponentDetailInfoUI.cs">
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+
+public class ComponentDetailInfoUI : MonoBehaviour
+{
+    public TMP_Text T_Info;
+    public string info;
+
+    public void Create(string info)
+    {
+        this.info = info;
+        T_Info.text = info;
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/ItemGrabManager.cs">
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
+
+public class ItemGrabManager : MonoBehaviour
+{
+    public List<XRGrabInteractable> CurrentItems = new();
+    public Action<XRGrabInteractable> OnItemGrabbed, OnItemDropped;
+
+    public void AddItem(XRGrabInteractable item)
+    {
+        CurrentItems.Add(item);
+        OnItemGrabbed?.Invoke(item);
+    }
+
+    public void RemoveItem(XRGrabInteractable item)
+    {
+        CurrentItems.Remove(item);
+        OnItemDropped?.Invoke(item);
+    }
+
+    public bool HasType<T>(out XRGrabInteractable item) where T : Component
+    {
+        item = CurrentItems.Find(it => it.GetComponent<T>() != null);
+        if (item == null)
+        {
+            return false;
+        }
+        return true;
+    }
+
+}
+</file>
+
+<file path="Project/Assets/Scripts/RemoveAllComponentsFromGameObject.cs">
+using UnityEngine;
+
+[ExecuteInEditMode]
+public class RemoveAllComponentsFromGameObject : MonoBehaviour
+{
+    //This is an editor script that is used to remove all components of a gameobject.
+    //To use: Add this script to a gameobject
+    //To clear multiple objects from components, mark multiple objects
+    //and add the script to them
+
+    void OnEnable()
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            foreach (var comp in gameObject.GetComponents<Component>())
+            {
+                //Don't remove the Transform component
+                if (!(comp is Transform))
+                {
+                    //Don't remove this script until the loop has finished
+                    if (!(comp is RemoveAllComponentsFromGameObject))
+                    {
+                        DestroyImmediate(comp);
+                    }
+                }
+            }
+        }
+
+        if (gameObject.GetComponents<Component>().Length > 0)
+            Debug.LogWarning("Tried clearing object but could not finish: "
+                + gameObject.transform.name);
+        else
+            Debug.LogWarning("Cleared components from object successfully: "
+                + gameObject.transform.name);
+
+        DestroyImmediate(gameObject.GetComponent<RemoveAllComponentsFromGameObject>());
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/UI/BuildValidator.cs">
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro; 
+
+public class BuildValidator : MonoBehaviour
+{
+    [Header("Setup")]
+    public PhisicalCase targetCase; 
+    public TextMeshProUGUI feedbackText; 
+
+    private Button myButton;
+
+    private void Start()
+    {
+        myButton = GetComponent<Button>();
+        
+        if (myButton != null)
+        {
+            myButton.onClick.AddListener(ValidatePc);
+        }
+    }
+
+    public void ValidatePc()
+    {
+        if (targetCase == null)
+        {
+            targetCase = FindObjectOfType<PhisicalCase>();
+        }
+
+        if (targetCase == null)
+        {
+            UpdateFeedback("No PC found!", Color.red);
+            return;
+        }
+
+
+        if (targetCase.CheckCompleteness(out string missingPart))
+        {
+            // SUCCES
+            Debug.Log("Build Complete!");
+            UpdateFeedback("Success! Booting...", Color.green);
+        }
+        else
+        {
+            // EROARE
+            Debug.Log("Build Incomplete: " + missingPart);
+            UpdateFeedback(missingPart, Color.red);
+        }
+    }
+
+    private void UpdateFeedback(string message, Color color)
+    {
+        if (feedbackText != null)
+        {
+            feedbackText.text = message;
+            feedbackText.color = color;
+        }
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/UI/PurchasedOrderUI.cs">
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class PurchasedOrderUI : MonoBehaviour
+{
+    private static readonly WaitForSeconds _waitForSeconds0_01 = new(0.01f);
+    public PcComponent component;
+
+    public TMP_Text T_Name, T_Price, T_Status;
+    public Image I_Status;
+    public Slider S_Progress;
+
+    public List<string> StagesNames = new();
+    public List<Color> StagesColors = new();
+
+    public void Create(PcComponent component, Action onDelivered, float time = 10)
+    {
+        this.component = component;
+        T_Name.text = component.Name;
+        T_Price.text = "Total: $" + component.Price;
+        StartDelivery(time, onDelivered);
+    }
+
+    public void StartDelivery(float time, Action onDelivered)
+    {
+        StartCoroutine(StartDeliveryCor(time, onDelivered));
+    }
+
+
+    private IEnumerator StartDeliveryCor(float time, Action onDelivered)
+    {
+        float curr = 0;
+        int currStage = 0;
+        S_Progress.maxValue = time;
+        S_Progress.value = 0;
+
+        T_Status.text = StagesNames[0];
+        I_Status.color = StagesColors[0];
+
+        while (curr < time)
+        {
+            yield return _waitForSeconds0_01;
+            curr += 0.01f;
+            S_Progress.value = curr;
+
+            int stage = (int)(curr / (time / (StagesNames.Count - 1)));
+
+            if (stage != currStage)
+            {
+                currStage = stage;
+                T_Status.text = StagesNames[stage];
+                I_Status.color = StagesColors[stage];
+
+                if (currStage < 5)
+                {
+                    yield return new WaitForSeconds(UnityEngine.Random.Range(1, 5));
+                }
+            }
+        }
+
+        onDelivered.Invoke();
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/UI/SpecUI.cs">
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+
+public class SpecUI : MonoBehaviour
+{
+    public Spec thisSpec;
+
+    public TMP_Text T_Name, T_Value;
+
+    public void Create(Spec spec)
+    {
+        thisSpec = spec; 
+        T_Name.text = spec.Name;
+        T_Value.text = spec.Value;
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/UI/ViewPcComponentUI.cs">
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class ViewPcComponentUI : MonoBehaviour
+{
+    public TMP_Text T_Name, T_Description, T_Price;
+    public Image I_Sprite;
+    public Button B_Buy;
+    public SpecUI OriginalSpecUI;
+    public List<SpecUI> SpecsUI = new();
+
+    public void Create(PcComponentUI pcui)
+    {
+        T_Name.text = pcui.T_Name.text;
+        T_Description.text = pcui.T_Description.text;
+        T_Price.text = pcui.T_Price.text;
+        I_Sprite.sprite = pcui.I_Sprite.sprite;
+
+        B_Buy.onClick.RemoveAllListeners();
+        B_Buy.onClick = pcui.B_Buy.onClick;
+        B_Buy.onClick.AddListener(delegate {           
+            gameObject.SetActive(false);
+        });
+
+        foreach (var spec in SpecsUI)
+        {
+            Destroy(spec.gameObject);
+        }
+        SpecsUI.Clear();
+
+        foreach(var spec in pcui.thisComponent.Specs)
+        {
+            var newSpec = Instantiate(OriginalSpecUI, OriginalSpecUI.transform.parent);
+            newSpec.Create(spec);
+            newSpec.gameObject.SetActive(true);
+            SpecsUI.Add(newSpec);
+        }
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/Cooler/PhisicalCooler.cs">
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+public class PhisicalCooler : PhisicalPcComponent
+{
+    public float FanSpeed = 1;
+    public List<GameObject> Blades = new();
+    public bool Power;
+    public override void SpecialCreate()
+    {
+        Blades = transform.FindAllDeepChildren("BLADES").Select(t => t.gameObject).ToList();
+    }
+
+    public override void SpecialAttatch()
+    {
+        Power = true;
+    }
+
+    public override void SpecialDeAttatch()
+    {
+        Power = false;
+    }
+
+    private void Update()
+    {
+        if(Power)
+        {
+            SpinBlades();
+        }
+    }
+
+    public void SpinBlades()
+    {
+        foreach(var blade in Blades)
+        {
+            blade.transform.Rotate(new Vector3(0, 1 * FanSpeed * Time.deltaTime * 360, 0));
+        }
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/ComponentUi/ComponentDetailUI.cs">
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+
+public class ComponentDetailUI : MonoBehaviour
+{
+    public TMP_Text T_TypeName;
+    public ComponentDetailInfoUI OrgInfo;
+    public List<ComponentDetailInfoUI> AllOrgInfos = new();
+   
+
+    public void Create(List<PhisicalPcComponent> components)
+    {
+        if (!AllSameChildType(components, out Type T))
+            return;
+
+        var name = T.Name;
+        const string prefix = "Phisical";
+        if (name.StartsWith(prefix))
+            name = name[prefix.Length..];
+        T_TypeName.text = name; 
+
+        foreach(var cmp in components)
+        {
+            CreateComponentDetailInfo(cmp.thisComponent);
+        }
+    }
+
+
+    public bool AllSameChildType(IReadOnlyList<PhisicalPcComponent> list, out Type T)
+    {
+        T = null;
+        if (list == null || list.Count == 0) return false;
+
+        var t = list[0].GetType();
+        T = t;
+        for (int i = 1; i < list.Count; i++)
+            if (list[i] == null || list[i].GetType() != t)
+                return false;
+
+        return true;
+    }
+
+    public void CreateComponentDetailInfo(PcComponent pc)
+    {
+        var newInfo = Instantiate(OrgInfo, transform);
+        string info = pc.Name + "\n\n" + pc.Description + "\n\n" + string.Join("\n-", pc.Specs) + "\n\n$" + pc.Price;
+        newInfo.Create(info);
+        newInfo.gameObject.SetActive(true);
+        AllOrgInfos.Add(newInfo);
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/Storage.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Storage : MonoBehaviour
+{
+    public static List<PcComponent> Components = new();
+
+    public void Populate()
+    {
+        Components.Clear();
+        print("Generating components");
+
+        Components.Add(new Cpu(
+            Id: "1",
+            Name: "Core i7-13700K",
+            Description: "Hybrid desktop CPU (8P+8E) for high-FPS gaming and heavy multitasking.",
+            Price: 379.99f,
+            Manufacturer: "Intel",
+            Model: "i7-13700K",
+            specs: new List<Spec> {
+                new ("Cores/Threads", "8P+8E / 24"),
+                new ("P-Core Base/Boost", "3.4 / 5.4 GHz"),
+                new ("Socket", "LGA1700"),
+                new ("TDP", "125W")
+            }
+        ));
+
+        Components.Add(new MotherBoard(
+            Id: "2",
+            Name: "MAG Z790 TOMAHAWK",
+            Description: "LGA1700 ATX with strong I/O and PCIe 5.0 x16 for 12th–14th Gen Intel CPUs.",
+            Manufacturer: "MSI",
+            Model: "Z790 TOMAHAWK",
+            Price: 289.99f,
+            Specs: new List<Spec> {
+                new ("Socket", "LGA1700"),
+                new ("Form Factor", "ATX"),
+                new ("Memory", "DDR5"),
+                new ("PCIe", "Gen 5 x16")
+            }
+        ));
+
+        Components.Add(new Ram(
+            Id: "3",
+            Name: "Trident Z5 64GB (2x32) DDR5-6400",
+            Description: "High-capacity, high-speed kit for heavy creative workloads and gaming.",
+            Manufacturer: "G.SKILL",
+            Model: "F5-6400J3239G32GX2-TZ5K",
+            Price: 219.99f,
+            Specs: new List<Spec> {
+                new ("Capacity", "64 GB"),
+                new ("Speed", "DDR5-6400"),
+                new ("CAS", "CL32"),
+                new ("Voltage", "1.40V")
+            }
+        ));
+
+        Components.Add(new Gpu(
+            Id: "4",
+            Name: "Nvidia RTX 5090",
+            Description: "High-value 1440p/entry-4K GPU with modern AV1 encode and DisplayPort 2.1.",
+            Price: 499.99f,
+            Manufacturer: "NVidia",
+            Maker: "Nvidia",
+            Model: "RTX 5090",
+            Specs: new List<Spec> {
+                new ("VRAM", "24 GB GDDR6"),
+                new ("Game/Boost", "2.1 / 2.4 GHz"),
+                new ("TBP", "263W"),
+                new ("Outputs", "HDMI 2.1, 3x DP 2.1")
+            }
+        ));
+
+        Components.Add(new Case(
+            Id: "5",
+            Name: "case",
+            Description: "case",
+            Manufacturer: "case",
+            Model: "case",
+            Price: 139.99f,
+            Specs: new List<Spec> {
+                new ("case", "case")
+            }
+        ));
+
+        Components.Add(new Psu(
+            Id: "6",
+            Name: "FOCUS GX-750",
+            Description: "Quiet, efficient 80+ Gold PSU with full modular cables and ATX 3.0 support.",
+            Manufacturer: "Seasonic",
+            Model: "GX-750",
+            Price: 119.99f,
+            Specs: new List<Spec> {
+                new ("Wattage", "750W"),
+                new ("Efficiency", "80+ Gold"),
+                new ("Modularity", "Fully Modular"),
+                new ("ATX", "ATX 3.0")
+            }
+        ));
+
+        Components.Add(new Cooler(
+            Id: "7",
+            Name: "NH-D15",
+            Description: "Premium air cooler known for quiet operation and high thermal headroom.",
+            Manufacturer: "Noctua",
+            Model: "NH-D15",
+            Price: 99.95f,
+            Specs: new List<Spec> {
+                new ("Type", "Air"),
+                new ("Height", "14 mm"),
+                new ("TDP Rating", "≈220W"),
+                new ("Sockets", "AM5/AM4/LGA1700")
+            }
+        ));
+
+        Components.Add(new Gpu(
+            Id: "8",
+            Name: "ASUS ROG MARS 760",
+            Description: "A rare dual-GPU card featuring two GTX 760 cores on a single PCB. Outperformed the GTX Titan at launch.",
+            Price: 629.99f,
+            Manufacturer: "ASUS",
+            Maker: "NVIDIA",
+            Model: "MARS 760",
+            Specs: new List<Spec> {
+                new ("VRAM", "4 GB GDDR5 (2GB x 2)"),
+                new ("Game/Boost", "1006 / 1072 MHz"),
+                new ("TBP", "300W (2x 8-pin)"),
+                new ("Outputs", "2x DVI, 1x HDMI, 1x DP")
+            }
+        ));
+
+        Components.Add(new Cpu(
+            Id: "9",
+            Name: "AMD Ryzen 5 1600X",
+            Description: "First-generation Zen architecture processor. Delivers 6 cores and 12 threads for solid multi-tasking performance on the AM4 platform.",
+            Price: 149.99f,
+            Manufacturer: "AMD",
+            Model: "Ryzen 5 1600X",
+            specs: new List<Spec> {
+                new ("Socket", "AM4"),
+                new ("Cores/Threads", "6C / 12T"),
+                new ("Base/Boost", "3.6 / 4.0 GHz"),
+                new ("TDP", "95W"),
+                new ("L3 Cache", "16MB")
+            }
+        ));
+
+        Components.Add(new Ram(
+            Id: "10",
+            Name: "Kingston HyperX Fury 16GB DDR4-3200",
+            Description: "Plug N Play automatic overclocking. Features a low-profile heat spreader design compatible with large CPU air coolers.",
+            Manufacturer: "Kingston",
+            Model: "HX432C16FB3/16",
+            Price: 49.99f,
+            Specs: new List<Spec> {
+                new ("Capacity", "16 GB"),
+                new ("Speed", "DDR4-3200"),
+                new ("CAS", "CL16"),
+                new ("Voltage", "1.35V")
+            }
+        ));
+
+        // ===== GPUs =====
+
+        /*Components.Add(new Gpu(
+            Id: "3",
+            Name: "Radeon RX 7800 XT",
+            Description: "High-value 1440p/entry-4K GPU with modern AV1 encode and DisplayPort 2.1.",
+            Price: 499.99f,
+            Manufacturer: "AMD",
+            Maker: "AMD",
+            Model: "RX 7800 XT",
+            Specs: new List<Spec> {
+                new Spec("VRAM", "16 GB GDDR6"),
+                new Spec("Game/Boost", "2.1 / 2.4 GHz"),
+                new Spec("TBP", "263W"),
+                new Spec("Outputs", "HDMI 2.1, 3x DP 2.1")
+            }
+        ));
+
+        // ===== Motherboards =====
+        Components.Add(new MotherBoard(
+            Id: "4",
+            Name: "ROG STRIX B650E-F",
+            Description: "AM5 ATX board with PCIe 5.0 support and robust VRMs for Ryzen 7000/8000.",
+            Manufacturer: "ASUS",
+            Model: "B650E-F",
+            Price: 259.99f,
+            Specs: new List<Spec> {
+                new Spec("Socket", "AM5"),
+                new Spec("Form Factor", "ATX"),
+                new Spec("Memory", "DDR5"),
+                new Spec("PCIe", "Gen 5 GPU/M.2")
+            }
+        ));
+
+        Components.Add(new MotherBoard(
+            Id: "5",
+            Name: "MAG Z790 TOMAHAWK",
+            Description: "LGA1700 ATX with strong I/O and PCIe 5.0 x16 for 12th–14th Gen Intel CPUs.",
+            Manufacturer: "MSI",
+            Model: "Z790 TOMAHAWK",
+            Price: 289.99f,
+            Specs: new List<Spec> {
+                new Spec("Socket", "LGA1700"),
+                new Spec("Form Factor", "ATX"),
+                new Spec("Memory", "DDR5"),
+                new Spec("PCIe", "Gen 5 x16")
+            }
+        ));
+
+        // ===== RAM =====
+        Components.Add(new Ram(
+            Id: "6",
+            Name: "Vengeance 32GB (2x16) DDR5-6000",
+            Description: "Balanced DDR5 kit ideal for AM5/Intel platforms; great price-to-perf.",
+            Manufacturer: "Corsair",
+            Model: "CMK32GX5M2B6000",
+            Price: 109.99f,
+            Specs: new List<Spec> {
+                new Spec("Capacity", "32 GB"),
+                new Spec("Speed", "DDR5-6000"),
+                new Spec("CAS", "CL36"),
+                new Spec("Voltage", "1.35V")
+            }
+        ));
+
+        Components.Add(new Ram(
+            Id: "7",
+            Name: "Trident Z5 64GB (2x32) DDR5-6400",
+            Description: "High-capacity, high-speed kit for heavy creative workloads and gaming.",
+            Manufacturer: "G.SKILL",
+            Model: "F5-6400J3239G32GX2-TZ5K",
+            Price: 219.99f,
+            Specs: new List<Spec> {
+                new Spec("Capacity", "64 GB"),
+                new Spec("Speed", "DDR5-6400"),
+                new Spec("CAS", "CL32"),
+                new Spec("Voltage", "1.40V")
+            }
+        ));
+
+        // ===== Drives =====
+        Components.Add(new Drive(
+            Id: "8",
+            Name: "990 PRO 1TB NVMe",
+            Description: "PCIe 4.0 M.2 SSD with top-tier sequential speeds and solid endurance.",
+            Manufacturer: "Samsung",
+            Model: "MZ-V9P1T0",
+            Price: 119.99f,
+            Specs: new List<Spec> {
+                new Spec("Form Factor", "M.2 2280"),
+                new Spec("Interface", "PCIe 4.0 x4 NVMe"),
+                new Spec("Seq Read/Write", "7,450 / 6,900 MB/s"),
+                new Spec("Endurance", "600 TBW")
+            }
+        ));
+
+        Components.Add(new Drive(
+            Id: "9",
+            Name: "WD Blue 2TB HDD",
+            Description: "Reliable mass storage for media libraries, backups, and general use.",
+            Manufacturer: "Western Digital",
+            Model: "WD20EZBX",
+            Price: 54.99f,
+            Specs: new List<Spec> {
+                new Spec("Form Factor", "3.5\""),
+                new Spec("Interface", "SATA III"),
+                new Spec("RPM", "7200"),
+                new Spec("Cache", "256 MB")
+            }
+        ));
+
+        // ===== Coolers =====
+        Components.Add(new Cooler(
+            Id: "10",
+            Name: "NH-D15",
+            Description: "Premium dual-tower air cooler known for quiet operation and high thermal headroom.",
+            Manufacturer: "Noctua",
+            Model: "NH-D15",
+            Price: 99.95f,
+            Specs: new List<Spec> {
+                new Spec("Type", "Air"),
+                new Spec("Height", "165 mm"),
+                new Spec("TDP Rating", "≈220W"),
+                new Spec("Sockets", "AM5/AM4/LGA1700")
+            }
+        ));
+
+        Components.Add(new Cooler(
+            Id: "11",
+            Name: "iCUE H100i Elite",
+            Description: "240 mm AIO with RGB and good performance in compact ATX/mATX builds.",
+            Manufacturer: "Corsair",
+            Model: "H100i",
+            Price: 149.99f,
+            Specs: new List<Spec> {
+                new Spec("Type", "AIO (240 mm)"),
+                new Spec("Fans", "2x120 mm"),
+                new Spec("RGB", "Yes"),
+                new Spec("Sockets", "AM5/AM4/LGA1700")
+            }
+        ));
+
+        // ===== PSUs =====
+
+
+        Components.Add(new Psu(
+            Id: "13",
+            Name: "RM850x",
+            Description: "Proven 850W platform suitable for high-end GPUs; fully modular cabling.",
+            Manufacturer: "Corsair",
+            Model: "RM850x (2023)",
+            Price: 139.99f,
+            Specs: new List<Spec> {
+                new Spec("Wattage", "850W"),
+                new Spec("Efficiency", "80+ Gold"),
+                new Spec("Modularity", "Fully Modular"),
+                new Spec("ATX", "ATX 3.0 / PCIe 5")
+            }
+        ));
+
+
+        Components.Add(new Case(
+            Id: "14",
+            Name: "case",
+            Description: "case",
+            Manufacturer: "case",
+            Model: "case",
+            Price: 139.99f,
+            Specs: new List<Spec> {
+                new Spec("case", "case"),
+
+        ));}*/
+    }
+
+    [SerializeField]
+    public List<PcComponent> ViewComponents = new();
+
+    private void Awake()
+    {
+        Populate();
+        ViewComponents = Components;
+    }
+
+}
+</file>
+
+<file path="Project/Assets/Scripts/UI/Orders.cs">
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using UnityEngine;
+
+public class Orders : MonoBehaviour
+{
+    public PurchasedOrderUI OrginalPurchasedOrderUI;
+    public List<PurchasedOrderUI> AllPurchasedOrderUI = new();
+
+    public SoldOrderUI OriginalSoldOrderUI;
+    public List<SoldOrderUI> AllSoldOrderUI = new();
+
+    public void CreateOrder(PcComponent component, Action onDelivered, float time = 10)
+    {
+        var newOrder = Instantiate(OrginalPurchasedOrderUI, OrginalPurchasedOrderUI.transform.parent);
+        AllPurchasedOrderUI.Add(newOrder);
+
+        newOrder.transform.SetAsFirstSibling();
+        newOrder.gameObject.SetActive(true);
+        newOrder.Create(component, onDelivered, time);
+    }
+
+    public void CreateSoldOrder(List<PhisicalPcComponent> components)
+    {
+        var newOrder = Instantiate(OriginalSoldOrderUI, OriginalSoldOrderUI.transform.parent);
+        AllSoldOrderUI.Add(newOrder);
+
+        newOrder.transform.SetAsFirstSibling();
+        newOrder.gameObject.SetActive(true);
+        newOrder.Create(components, AllSoldOrderUI.Count);
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/UI/Paginator.cs">
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class Paginator : MonoBehaviour
+{
+    public int Value;
+    public TMP_Text T_Value;
+    public int MaxOnPage, CurrentOnPage;
+    public Button B_Left, B_Right;
+    public Action<int> OnChange;
+
+    private void Awake()
+    {
+        B_Left.onClick.AddListener(() =>
+        {
+            Value--;
+            T_Value.text = Value.ToString();
+            if(Value < 0)
+                Value = 0;
+            OnChange?.Invoke(Value);
+            UpdateButtons();
+
+        });
+
+        B_Right.onClick.AddListener(() =>
+        {
+            if (CurrentOnPage < MaxOnPage)
+                return;
+           
+            Value++;
+            T_Value.text = Value.ToString();
+            OnChange?.Invoke(Value);
+            UpdateButtons();
+        });
+    }
+
+
+    public void UpdateCounters(int current, int max)
+    {
+        CurrentOnPage = current;
+        MaxOnPage = max;
+        UpdateButtons();
+    }
+
+    private void UpdateButtons()
+    {
+        B_Left.interactable = Value > 0;
+
+        B_Right.interactable = CurrentOnPage >= MaxOnPage;
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/UI/PcComponentUI.cs">
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+public class PcComponentUI : MonoBehaviour
+{
+    public PcComponent thisComponent;
+    public TMP_Text T_Name, T_Description, T_Price;
+    public Button B_View, B_Buy;
+    public Image I_Sprite;
+
+    public void Create(Shop s, PcComponent component)
+    {
+        thisComponent = component;
+        T_Name.text = component.Name;
+        T_Description.text = component.Description;
+        T_Price.text = component.Price.ToString();
+
+        B_Buy.onClick.AddListener(() => { s.BuyComponent(this, thisComponent); });
+        B_View.onClick.AddListener(() => { Singleton.ViewPcComponentUI.gameObject.SetActive(true); Singleton.ViewPcComponentUI.Create(this); });
+
+        I_Sprite.sprite = Resources.Load<Sprite>($"images/{component.ModelId}");       
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/UI/PriceInfo.cs">
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class PriceInfo : MonoBehaviour
+{
+    public float Value;
+    public TMP_Text T_Value;
+    public float Step = 25;
+
+    public Button B_Up, B_Down;
+    public Action<float> OnChange;
+
+    private void Awake()
+    {
+        UpdateText();
+        B_Up.onClick.AddListener(() =>
+        {
+            Value += Step;
+            UpdateText();
+            OnChange?.Invoke(Value);
+        });
+        B_Down.onClick.AddListener(() =>
+        {
+            Value -= Step;
+            if(Value < 0) Value = 0;
+            UpdateText();
+            OnChange?.Invoke(Value);
+        });
+    }
+
+    public void UpdateText()
+    {
+        T_Value.text = Value.ToString();
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/UI/SoldOrderUI.cs">
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using TMPro;
+using UnityEngine;
+
+public class SoldOrderUI : MonoBehaviour
+{
+    public TMP_Text T_Title, T_Price, T_OriginalItem;
+
+    public void Create(List<PhisicalPcComponent> components, int ind)
+    {
+        T_Title.text = "Sale #" + ind;
+        T_Price.text = "Total: $" + (components.Sum(c => c.thisComponent.Price) + components.Sum(c => c.thisComponent.Price) / 10);
+
+        foreach (var pc in components)
+        {
+            var newItem = Instantiate(T_OriginalItem, T_OriginalItem.transform.parent);
+            newItem.gameObject.SetActive(true);
+            newItem.text = $"<align=left>{pc.thisComponent.Name}<line-height=0>\r\n<align=right>${pc.thisComponent.Price}<line-height=1em>";
+        }
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/MotherBoard/PhisicalMotherBoard.cs">
+using Pixelplacement;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
+
+public class PhisicalMotherBoard : PhisicalPcComponent, IAttachableTo
+{
+    [HideInInspector]
+    public GameObject CpuHighlight;
+
+    [Header("Motherboard")] 
+    public bool CpuMounted = false;
+    public List<Slot> RamSlots = new();
+    public List<Slot> GpuSlots = new();
+    
+
+    private void Start()
+    {
+        Singleton.ItemGrabManager.OnItemDropped += (item) =>
+        {
+            print("Figuring if item dropped can be attached");
+            if(!CpuMounted && item.TryGetComponent(out PhisicalCpu cpu) && Vector3.Distance(item.transform.position, CpuHighlight.transform.position) < 0.1f)
+            {
+                print("Trying to mount CPU");
+                AttachComponent(cpu,
+                    () => { CpuMounted = false; },
+                    () => {
+                        Tween.LocalPosition(item.transform, CpuHighlight.transform.localPosition, 0.5f, 0, Tween.EaseInOut);
+                        Tween.Rotation(item.transform, CpuHighlight.transform.rotation, 0.5f, 0, Tween.EaseInOut);
+                        CpuHighlight.SetActive(false);
+                        CpuMounted = true;
+                    }
+                );
+            }
+
+            if(RamSlots.Exists(r => !r.isOccupied) && item.TryGetComponent(out PhisicalRam ram) && GetClosestHighlight(RamSlots, item.gameObject, 0.1f, out var closestRam))
+            {
+                print("Trying to mount RAM");
+                RamSlots.ForEach(r => r.slotObject.SetActive(false));
+
+                AttachComponent(ram,
+                    () => { RamSlots[RamSlots.FindIndex(r => r.slotObject == closestRam)] = (closestRam, false); },
+                    () => {
+                        Tween.LocalPosition(item.transform, closestRam.transform.localPosition, 0.5f, 0, Tween.EaseInOut);
+                        Tween.Rotation(item.transform, closestRam.transform.rotation, 0.5f, 0, Tween.EaseInOut);
+                        RamSlots[RamSlots.FindIndex(r => r.slotObject == closestRam)] = (closestRam, true);
+                    }
+                );                                                         
+            }
+
+            if (GpuSlots.Exists(r => !r.isOccupied) && item.TryGetComponent(out PhisicalGpu gpu) && GetClosestHighlight(GpuSlots, item.gameObject, 0.1f, out var closestGpu))
+            {
+                print("Trying to mount GPU");
+                GpuSlots.ForEach(r => r.slotObject.SetActive(false));
+
+                AttachComponent(gpu,
+                    () => { GpuSlots[GpuSlots.FindIndex(r => r.slotObject == closestGpu)] = (closestGpu, false); },
+                    () => {
+                        Tween.LocalPosition(item.transform, closestGpu.transform.localPosition, 0.5f, 0, Tween.EaseInOut);
+                        Tween.Rotation(item.transform, closestGpu.transform.rotation, 0.5f, 0, Tween.EaseInOut);
+                        GpuSlots[GpuSlots.FindIndex(r => r.slotObject == closestGpu)] = (closestGpu, true);
+                    }
+                );
+            }
+        };
+    }
+
+    private void Update()
+    {
+        if (Singleton.ItemGrabManager.CurrentItems.Count != 0)
+        {
+            if(!CpuMounted && Singleton.ItemGrabManager.HasType<PhisicalCpu>(out var cpuItem))
+            {
+                CpuHighlight.SetActive(Vector3.Distance(cpuItem.transform.position, CpuHighlight.transform.position) < 0.1f);
+            }
+            if (RamSlots.Exists(r => !r.isOccupied) && Singleton.ItemGrabManager.HasType<PhisicalRam>(out var ramItem))
+            {
+                ShowClosestHighlight(RamSlots, ramItem.gameObject, 0.1f);
+            }
+            if (GpuSlots.Exists(r => !r.isOccupied) && Singleton.ItemGrabManager.HasType<PhisicalGpu>(out var gpuItem))
+            {
+                ShowClosestHighlight(GpuSlots, gpuItem.gameObject, 0.1f);
+            }
+        }
+    }
+
+    public override void SpecialCreate()
+    {
+        CpuHighlight = transform.FindDeepChild("CpuHighlight").gameObject;
+        if (CpuHighlight == null)
+        {
+            Debug.LogError("CpuHighlight not found in MotherBoard");
+        }
+
+        RamSlots = transform.FindAllDeepChildren("RamHighlight").Select(t => new Slot(t.gameObject, false)).ToList();
+        if(RamSlots.Count == 0)
+        {
+            Debug.LogError("RamHighlights not found in MotherBoard");
+        }
+
+        GpuSlots = transform.FindAllDeepChildren("GpuHighlight").Select(t => new Slot(t.gameObject, false)).ToList();
+        if (GpuSlots.Count == 0)
+        {
+            Debug.LogError("GpuHighlights not found in MotherBoard");
+        }
+    }
+
+    public void ShowClosestHighlight(List<Slot> highlights, GameObject item, float treshold)
+    {
+        var min = Mathf.Infinity;
+        var closestSlot = (GameObject)null;
+
+        foreach (var (highlight, occupied) in highlights.Where(r => !r.isOccupied))
+        {
+            var dist = Vector3.Distance(item.transform.position, highlight.transform.position);
+            highlight.SetActive(false);
+            if (dist < min)
+            {
+                min = dist;
+                closestSlot = highlight;
+            }
+        }
+
+        if (min < treshold)
+            closestSlot.SetActive(true);
+        
+    }
+
+    public bool GetClosestHighlight(List<Slot> highlights, GameObject item, float treshold, out GameObject closestSlot)
+    {
+        var min = Mathf.Infinity;
+        closestSlot = null;
+        
+        foreach (var (highlight, occupied) in highlights.Where(r => !r.isOccupied))
+        {
+            var dist = Vector3.Distance(item.transform.position, highlight.transform.position);
+            highlight.SetActive(false);
+            if (dist < min)
+            {
+                min = dist;
+                closestSlot = highlight;
+            }
+        }
+
+        if (min < treshold)        
+            return true;
+
+        closestSlot = null;
+        return false;
+
+    }
+
+    public void AttachComponent(PhisicalPcComponent pc, Action OnDeAttach, Action SpecialBeh)
+    {
+        print("Mounting component to this component.");
+        pc.Attach(this);
+        pc.OnDeAttach += () => { OnDeAttach?.Invoke(); };
+        pc.gameObject.transform.SetParent(transform.GetChild(0), true);
+        SpecialBeh?.Invoke();
+    }
+    
+    public override bool CheckCompleteness(out string missingPart)
+    {
+        if (TEST_MODE)
+        {
+            missingPart = "";
+            return true;
+        }
+            
+
+        // 1. Verificăm CPU
+        if (!CpuMounted)
+        {
+            missingPart = "CPU is missing!";
+            return false;
+        }
+
+        // 2. Verificăm RAM (Măcar unul să fie montat)
+        // Putem fi mai stricți (toate sloturile) sau permisivi (minim unul)
+        bool hasRam = RamSlots.Any(slot => slot.isOccupied);
+        if (!hasRam)
+        {
+            missingPart = "No RAM memory installed!";
+            return false;
+        }
+
+        // 3. Verificăm GPU (Măcar unul)
+        bool hasGpu = GpuSlots.Any(slot => slot.isOccupied);
+        if (!hasGpu)
+        {
+            missingPart = "No GPU installed!";
+            return false;
+        }
+
+        // Dacă am ajuns aici, totul e ok pe placa de bază
+        missingPart = string.Empty;
+        return true;
+    }
+}
+
+[Serializable]
+public struct Slot
+{
+    [HideInInspector]
+    public GameObject slotObject;
+    public bool isOccupied;
+
+    public Slot(GameObject slotObject, bool isOccupied)
+    {
+        this.slotObject = slotObject;
+        this.isOccupied = isOccupied;
+    }
+
+    public void Deconstruct(out GameObject slotObject, out bool isOccupied)
+    {
+        slotObject = this.slotObject;
+        isOccupied = this.isOccupied;
+    }
+
+    public static implicit operator (GameObject, bool)(Slot r) => (r.slotObject, r.isOccupied);
+    public static implicit operator Slot((GameObject slotObject, bool Item2) tuple) => new(tuple.slotObject, tuple.Item2);
+}
+</file>
+
+<file path="Project/Assets/Scripts/TransformExtensions.cs">
+using System.Collections.Generic;
+using UnityEngine;
+
+public static class TransformExtensions
+{
+    public static Transform FindDeepChild(this Transform parent, string name)
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.name == name)
+                return child;
+
+            var result = child.FindDeepChild(name);
+            if (result != null)
+                return result;
+        }
+        return null;
+    }
+
+    public static List<Transform> FindAllDeepChildren(this Transform parent, string name)
+    {
+        List<Transform> results = new();
+        FindAllDeepChildrenRecursive(parent, name, results);
+        return results;
+    }
+
+    private static void FindAllDeepChildrenRecursive(Transform parent, string name, List<Transform> results)
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.name == name)
+                results.Add(child);
+
+            FindAllDeepChildrenRecursive(child, name, results);
+        }
+    }
+
+    public static void SetGlobalScale(this Transform transform, Vector3 globalScale)
+    {
+        transform.localScale = Vector3.one;
+        var parent = transform.parent;
+        if (parent != null)
+        {
+            Vector3 parentScale = parent.lossyScale;
+            transform.localScale = new Vector3(
+                globalScale.x / parentScale.x,
+                globalScale.y / parentScale.y,
+                globalScale.z / parentScale.z
+            );
+        }
+        else
+        {
+            transform.localScale = globalScale;
+        }
+    }
+
+    public static void MatchWorldSizeTo(this Transform target, Transform reference)
+    {
+        var refR = reference.GetComponentInChildren<Renderer>();
+        var tgtR = target.GetComponentInChildren<Renderer>();
+        if (refR == null || tgtR == null) { Debug.LogWarning("Renderer missing"); return; }
+
+        // World sizes
+        Vector3 refSize = refR.bounds.size;
+        Vector3 tgtSize = tgtR.bounds.size;
+
+        // Avoid divide-by-zero
+        Vector3 safe = new(Mathf.Max(tgtSize.x, 1e-6f),
+                           Mathf.Max(tgtSize.y, 1e-6f),
+                           Mathf.Max(tgtSize.z, 1e-6f));
+
+        // How much we must multiply the *world* size
+        Vector3 worldFactor = new(refSize.x / safe.x, refSize.y / safe.y, refSize.z / safe.z);
+
+        // Convert world factor into localScale factor (account for parent scale)
+        Vector3 parentWorld = target.parent ? target.parent.lossyScale : Vector3.one;
+        target.localScale = new Vector3(
+            target.localScale.x * worldFactor.x / parentWorld.x,
+            target.localScale.y * worldFactor.y / parentWorld.y,
+            target.localScale.z * worldFactor.z / parentWorld.z
+        );
+    }
+
+    static bool TryGetWorldCorners(Transform t, out List<Vector3> corners)
+    {
+        corners = new List<Vector3>(8);
+        MeshFilter mf = t.GetComponentInChildren<MeshFilter>();
+        if (mf && mf.sharedMesh)
+        {
+            var b = mf.sharedMesh.bounds; // local-space AABB
+            AddCornersLocalBox(t, b.center, b.extents, corners, mf.transform.localToWorldMatrix);
+            return true;
+        }
+
+        SkinnedMeshRenderer smr = t.GetComponentInChildren<SkinnedMeshRenderer>();
+        if (smr && smr.sharedMesh)
+        {
+            // Skinned meshes: local bounds may shift; still better than world AABB
+            var b = smr.sharedMesh.bounds;
+            AddCornersLocalBox(t, b.center, b.extents, corners, smr.transform.localToWorldMatrix);
+            return true;
+        }
+
+        // Fallback: world AABB from Renderer (approximate if rotated)
+        var r = t.GetComponentInChildren<Renderer>();
+        if (r)
+        {
+            var wb = r.bounds;
+            AddCornersWorldAABB(wb.center, wb.extents, corners);
+            return true;
+        }
+
+        return false;
+    }
+
+    static void AddCornersLocalBox(Transform root, Vector3 c, Vector3 e, List<Vector3> outCorners, Matrix4x4 l2w)
+    {
+        outCorners.Clear();
+        for (int xi = -1; xi <= 1; xi += 2)
+            for (int yi = -1; yi <= 1; yi += 2)
+                for (int zi = -1; zi <= 1; zi += 2)
+                {
+                    var local = c + Vector3.Scale(e, new Vector3(xi, yi, zi));
+                    outCorners.Add(l2w.MultiplyPoint3x4(local));
+                }
+    }
+
+    static void AddCornersWorldAABB(Vector3 c, Vector3 e, List<Vector3> outCorners)
+    {
+        outCorners.Clear();
+        for (int xi = -1; xi <= 1; xi += 2)
+            for (int yi = -1; yi <= 1; yi += 2)
+                for (int zi = -1; zi <= 1; zi += 2)
+                {
+                    outCorners.Add(c + Vector3.Scale(e, new Vector3(xi, yi, zi)));
+                }
+    }
+
+    /// Returns the world-space length along plane.right (xLen) and plane.up (yLen).
+    public static bool GetProjectedSizeXY(Transform source, Transform plane, out float xLen, out float yLen)
+    {
+        xLen = yLen = 0f;
+        if (!TryGetWorldCorners(source, out var corners)) return false;
+
+        // Scalar coordinates along plane axes
+        float minX = float.PositiveInfinity, maxX = float.NegativeInfinity;
+        float minY = float.PositiveInfinity, maxY = float.NegativeInfinity;
+
+        var ax = plane.right; // plane X
+        var ay = plane.up;    // plane Y
+
+        foreach (var p in corners)
+        {
+            float sx = Vector3.Dot(p, ax);
+            float sy = Vector3.Dot(p, ay);
+            if (sx < minX) minX = sx; if (sx > maxX) maxX = sx;
+            if (sy < minY) minY = sy; if (sy > maxY) maxY = sy;
+        }
+
+        xLen = Mathf.Max(1e-6f, maxX - minX);
+        yLen = Mathf.Max(1e-6f, maxY - minY);
+        return true;
+    }
+
+    /// Scales target so its projected size on plane’s local X/Y matches desired (in world units).
+    public static void MatchProjectionXY(Transform target, Transform plane, float desiredX, float desiredY)
+    {
+        if (!GetProjectedSizeXY(target, plane, out float curX, out float curY)) return;
+
+        // Multiply local scale so the projected world size reaches desired size
+        var ls = target.localScale;
+        float fx = desiredX / curX;
+        float fy = desiredY / curY;
+        target.localScale = new Vector3(ls.x * fx, ls.y * fy, ls.z);
+    }
+
+    /// Sets target XY in plane’s local space to match source’s XY (keeping target’s local Z on that plane).
+    public static void SnapXYOnPlane(Transform target, Transform plane, Transform source)
+    {
+        // Convert source world pos into plane-local
+        var planeLocal = plane.InverseTransformPoint(source.position);
+        var targetLocal = plane.InverseTransformPoint(target.position);
+        targetLocal.x = planeLocal.x;
+        targetLocal.y = planeLocal.y;
+        // keep targetLocal.z (projection plane depth)
+        target.position = plane.TransformPoint(targetLocal);
+    }
+    public static void ClampProjectionWithin(Transform projection, Transform highlight)
+    {
+        // Convert both to highlight local space
+        Vector3 localPos = highlight.InverseTransformPoint(projection.position);
+
+        var r = highlight.GetComponentInChildren<Renderer>();
+        if (r == null) return;
+
+        // Use half-size extents in local space
+        Vector3 extents = highlight.InverseTransformVector(r.bounds.extents);
+        Vector3 center = highlight.InverseTransformPoint(r.bounds.center);
+
+        // Clamp X and Y to remain within highlight bounds
+        localPos.x = Mathf.Clamp(localPos.x, center.x - extents.x, center.x + extents.x);
+        localPos.y = Mathf.Clamp(localPos.y, center.y - extents.y, center.y + extents.y);
+
+        // Convert back to world
+        projection.position = highlight.TransformPoint(localPos);
+    }
+    public static void MatchProjectionXY_ByTrueSize(Transform target, Transform plane, float desiredX, float desiredY)
+    {
+        // What is the target's *current* size on the plane?
+        if (!GetProjectedSizeXY(target, plane, out float curX, out float curY)) return;
+
+        Vector3 ls = target.localScale;
+        float fx = desiredX / Mathf.Max(curX, 1e-6f);
+        float fy = desiredY / Mathf.Max(curY, 1e-6f);
+
+        target.localScale = new Vector3(ls.x * fx, ls.y * fy, ls.z);
+    }
+    public static bool TryGetTrueXYSize(Transform board, out float width, out float height)
+    {
+        width = height = 0f;
+
+        // Prefer MeshFilter; fall back to SkinnedMeshRenderer; otherwise Renderer AABB (approx)
+        var mf = board.GetComponentInChildren<MeshFilter>();
+        if (mf && mf.sharedMesh)
+        {
+            Vector3 sz = mf.sharedMesh.bounds.size;     // LOCAL space size
+            Vector3 s = mf.transform.lossyScale;       // how local axes scale into world
+            width = Mathf.Abs(sz.x * s.x);             // true physical width along local X
+            height = Mathf.Abs(sz.y * s.y);             // true physical height along local Y
+            return true;
+        }
+
+        var smr = board.GetComponentInChildren<SkinnedMeshRenderer>();
+        if (smr && smr.sharedMesh)
+        {
+            Vector3 sz = smr.sharedMesh.bounds.size;
+            Vector3 s = smr.transform.lossyScale;
+            width = Mathf.Abs(sz.x * s.x);
+            height = Mathf.Abs(sz.y * s.y);
+            return true;
+        }
+
+        // Fallback (approx): use Renderer AABB but deprojection already handled elsewhere
+        var r = board.GetComponentInChildren<Renderer>();
+        if (r)
+        {
+            Vector3 sz = r.bounds.size;                 // already world size
+            // We *assume* local XY corresponds roughly to world X/Y
+            width = Mathf.Max(1e-6f, sz.x);
+            height = Mathf.Max(1e-6f, sz.y);
+            return true;
+        }
+
+        return false;
+    }
+
+    public static List<T> FindAllDeepChildren<T>(this Transform parent)
+    where T : Component
+    {
+        List<T> results = new();
+        FindAllDeepChildrenRecursive(parent, results);
+        return results;
+    }
+
+    private static void FindAllDeepChildrenRecursive<T>(
+        Transform parent,
+        List<T> results) where T : Component
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.TryGetComponent<T>(out var component))
+                results.Add(component);
+
+            FindAllDeepChildrenRecursive(child, results);
+        }
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/Case/PhisicalCase.cs">
+using Pixelplacement;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+public class PhisicalCase : PhisicalPcComponent, IAttachableTo
+{
+    [HideInInspector]
+    public int buttonHeightOffset = 1;
+    public GameObject validatorButtonPrefab;
+    public GameObject MotherboardHighlight;
+    private GameObject MotherboardProjection;
+    [HideInInspector]
+    public GameObject PsuHighlight;
+
+    public List<Slot> FanSlots = new();
+
+    [Header("Case")]
+    public bool MotherboardMounted = false;
+    public bool PsuMounted = false;
+    public bool Completed = false;
+
+    private void Start()
+    {
+        SpawnValidatorButton();
+        MotherboardProjection = Instantiate(MotherboardHighlight, MotherboardHighlight.transform.parent);
+        MotherboardProjection.name = "MotherboardProjection";
+        Singleton.ItemGrabManager.OnItemDropped += (item) =>
+        {
+            if(!MotherboardMounted && item.TryGetComponent(out PhisicalMotherBoard mtr) && Vector3.Distance(item.transform.position, MotherboardHighlight.transform.position) < 0.2f)
+            {
+                print("Trying to mount Motherboard");
+                AttachComponent(mtr,
+                    () => { MotherboardMounted = false; },
+                    () => {
+                        Tween.LocalPosition(item.transform, MotherboardProjection.transform.localPosition, 0.5f, 0, Tween.EaseInOut);
+                        Tween.Rotation(item.transform, MotherboardProjection.transform.rotation, 0.5f, 0, Tween.EaseInOut);
+                        MotherboardProjection.SetActive(false);
+                        MotherboardMounted = true;
+                    }
+                );
+            }
+            if (!PsuMounted && item.TryGetComponent(out PhisicalPsu psu) && Vector3.Distance(item.transform.position, PsuHighlight.transform.position) < 0.5f)
+            {
+                print("Trying to mount Motherboard");
+                AttachComponent(psu,
+                    () => { PsuMounted = false; },
+                    () => {
+                        Tween.LocalPosition(item.transform, PsuHighlight.transform.localPosition, 0.5f, 0, Tween.EaseInOut);
+                        Tween.Rotation(item.transform, PsuHighlight.transform.rotation, 0.5f, 0, Tween.EaseInOut);
+                        PsuHighlight.SetActive(false);
+                        PsuMounted = true;
+                    }
+                );
+            }
+            if (FanSlots.Exists(r => !r.isOccupied) && item.TryGetComponent(out PhisicalCooler cooler) && GetClosestHighlight(FanSlots, item.gameObject, 0.25f, out var closestFan))
+            {
+                print("Trying to mount Fan");
+                FanSlots.ForEach(r => r.slotObject.SetActive(false));
+
+                AttachComponent(cooler,
+                    () => { FanSlots[FanSlots.FindIndex(r => r.slotObject == closestFan)] = (closestFan, false); },
+                    () => {
+                        Tween.LocalPosition(item.transform, closestFan.transform.localPosition, 0.5f, 0, Tween.EaseInOut);
+                        Tween.Rotation(item.transform, closestFan.transform.rotation, 0.5f, 0, Tween.EaseInOut);
+                        FanSlots[FanSlots.FindIndex(r => r.slotObject == closestFan)] = (closestFan, true);
+                    }
+                );
+            }
+        };
+
+        Interactible.hoverEntered.AddListener((a) =>
+        {
+            Singleton.DetailsTab.gameObject.SetActive(true);
+            Singleton.DetailsTab.transform.position = transform.position + new Vector3(0, Singleton.DetailsTab.aboveTreshold, 0);
+            Singleton.DetailsTab.Create(this);
+        });
+
+        Interactible.hoverExited.AddListener((a) =>
+        {
+            try
+            {
+                Singleton.DetailsTab.gameObject.SetActive(false);
+            }
+            catch { }
+            
+        });
+    }
+
+    private void SpawnValidatorButton()
+    {
+        if (validatorButtonPrefab == null)
+        {
+            validatorButtonPrefab = Resources.Load<GameObject>("models/PC_Validator_UI");
+        }
+
+        Vector3 spawnPos = transform.position + new Vector3(0, buttonHeightOffset, 0);
+
+        GameObject btnObj = Instantiate(validatorButtonPrefab, spawnPos, Quaternion.identity);
+
+        btnObj.transform.SetParent(this.transform);
+
+        CaseFloatingButton btnScript = btnObj.GetComponent<CaseFloatingButton>();
+        if(btnScript != null)
+        {
+            btnScript.Initialize(this);
+        }
+    }
+
+    private void Update()
+    {
+        if (Singleton.ItemGrabManager.CurrentItems.Count != 0)
+        {
+            if (!MotherboardMounted && Singleton.ItemGrabManager.HasType<PhisicalMotherBoard>(out var mtrItem))
+            {
+                var actualBoard = mtrItem.transform.GetChild(0);
+
+                bool show = Vector3.Distance(mtrItem.transform.position, MotherboardHighlight.transform.position) < 0.2f;
+                MotherboardProjection.SetActive(show);
+
+                if (show && TransformExtensions.TryGetTrueXYSize(actualBoard, out float trueW, out float trueH))
+                {
+                    TransformExtensions.MatchProjectionXY_ByTrueSize(MotherboardProjection.transform, MotherboardHighlight.transform, trueW, trueH);
+                    TransformExtensions.SnapXYOnPlane(MotherboardProjection.transform, MotherboardHighlight.transform, actualBoard);
+
+                    var difZ = (MotherboardHighlight.transform.localScale.x - MotherboardProjection.transform.localScale.x) / 2;
+                    var difY = (MotherboardHighlight.transform.localScale.y - MotherboardProjection.transform.localScale.y) / 2;
+                    MotherboardProjection.transform.localPosition = new Vector3(
+                        MotherboardProjection.transform.localPosition.x,
+                        Mathf.Clamp(
+                            MotherboardProjection.transform.localPosition.y,
+                            MotherboardHighlight.transform.localPosition.y - difY,
+                            MotherboardHighlight.transform.localPosition.y + difY
+                            ),
+                        Mathf.Clamp(
+                            MotherboardProjection.transform.localPosition.z,
+                            MotherboardHighlight.transform.localPosition.z - difZ,
+                            MotherboardHighlight.transform.localPosition.z + difZ
+                            )
+                        );
+                }
+            }
+            if(!PsuMounted && Singleton.ItemGrabManager.HasType<PhisicalPsu>(out var psuItem))
+            {
+                PsuHighlight.SetActive(Vector3.Distance(psuItem.transform.position, PsuHighlight.transform.position) < 0.5f);
+            }
+        }
+
+        if (FanSlots.Exists(r => !r.isOccupied) && Singleton.ItemGrabManager.HasType<PhisicalCooler>(out var gpuItem))
+        {
+            ShowClosestHighlight(FanSlots, gpuItem.gameObject, 0.25f);
+        }
+    }
+
+    public override void SpecialCreate()
+    {
+        MotherboardHighlight = transform.FindDeepChild("MotherboardHighlight").gameObject;
+        if (MotherboardHighlight == null)
+        {
+            Debug.LogError("MotherboardHighlight not found in Case");
+        }
+
+        PsuHighlight = transform.FindDeepChild("PsuHighlight").gameObject;
+        if (PsuHighlight == null)
+        {
+            Debug.LogError("MotherboardHighlight not found in Case");
+        }
+
+        FanSlots = transform.FindAllDeepChildren("FanHighlight").Select(t => new Slot(t.gameObject, false)).ToList();
+        if (FanSlots.Count == 0)
+        {
+            Debug.LogError("FanHighlights not found in MotherBoard");
+        }
+    }
+
+    public void AttachComponent(PhisicalPcComponent pc, Action OnDeAttach, Action SpecialBeh)
+    {
+        print("Mounting component to this motherboard.");
+        pc.Attach(this);
+        pc.OnDeAttach += () => { OnDeAttach?.Invoke(); };
+        pc.gameObject.transform.SetParent(transform.GetChild(0), true);
+        SpecialBeh?.Invoke();
+    }
+
+
+    public override bool CheckCompleteness(out string missingPart)
+    {
+        /*if (TEST_MODE)
+        {
+            missingPart = "";
+            return true;
+        }*/
+
+        if (!MotherboardMounted)
+        {
+            missingPart = "Motherboard is missing from the case!";
+            return false;
+        }
+
+        if(!PsuMounted)
+        {
+            missingPart = "Power Supply Unit is missing from the case!";
+            return false;
+        }
+
+        var attachedMotherboard = transform.GetChild(0).GetComponentInChildren<PhisicalMotherBoard>();
+
+        if (attachedMotherboard == null)
+        {
+            missingPart = "Motherboard logic not found!";
+            return false;
+        }       
+
+        return attachedMotherboard.CheckCompleteness(out missingPart);
+    }
+
+    public void ShowClosestHighlight(List<Slot> highlights, GameObject item, float treshold)
+    {
+        var min = Mathf.Infinity;
+        var closestSlot = (GameObject)null;
+
+        foreach (var (highlight, occupied) in highlights.Where(r => !r.isOccupied))
+        {
+            var dist = Vector3.Distance(item.transform.position, highlight.transform.position);
+            highlight.SetActive(false);
+            if (dist < min)
+            {
+                min = dist;
+                closestSlot = highlight;
+            }
+        }
+
+        if (min < treshold)
+            closestSlot.SetActive(true);
+
+    }
+    public bool GetClosestHighlight(List<Slot> highlights, GameObject item, float treshold, out GameObject closestSlot)
+    {
+        var min = Mathf.Infinity;
+        closestSlot = null;
+
+        foreach (var (highlight, occupied) in highlights.Where(r => !r.isOccupied))
+        {
+            var dist = Vector3.Distance(item.transform.position, highlight.transform.position);
+            highlight.SetActive(false);
+            if (dist < min)
+            {
+                min = dist;
+                closestSlot = highlight;
+            }
+        }
+
+        if (min < treshold)
+            return true;
+
+        closestSlot = null;
+        return false;
+
+    }
+
+}
+</file>
+
+<file path="Project/Assets/Scripts/Components/PhisicalPcComponent.cs">
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.UIElements;
+using UnityEngine.XR.Interaction.Toolkit;
+using VHACD.Unity;
+
+[RequireComponent(typeof(XRGrabInteractable), typeof(Rigidbody))]
+public class PhisicalPcComponent : MonoBehaviour
+{
+    public static bool TEST_MODE = true;
+
+    [HideInInspector]
+    public PcComponent thisComponent;
+
+    [Header("Base component")] 
+    public GameObject mesh;
+    public Material material;
+    public XRGrabInteractable Interactible;
+    public Rigidbody Rigidbody;
+
+    public bool Attached = false;
+    public PhisicalPcComponent AttachedTo;
+    public Action OnDeAttach;
+
+    public List<Collider> Colliders = new();
+
+    public void Create(PcComponent pc)
+    {
+        thisComponent = pc;
+
+        var prefab = Resources.Load<GameObject>($"models/{thisComponent.ModelId}");
+        if (prefab == null)
+            prefab = Resources.Load<GameObject>("models/empty");
+
+        mesh = Instantiate(prefab, transform);
+        mesh.transform.localPosition = Vector3.zero;
+
+        //material = Resources.Load<Material>($"materials/{thisComponent.ModelId}");
+        //if (material == null)
+            //material = Resources.Load<Material>("materials/empty");
+
+        //mesh.GetComponentInChildren<MeshRenderer>().material = material;
+        //mesh.GetComponentInChildren<MeshRenderer>().material = material;
+
+        Interactible = GetComponent<XRGrabInteractable>();
+        Rigidbody = GetComponent<Rigidbody>();
+
+        Interactible.selectEntered.AddListener((a) =>
+        {
+            if(Attached)
+                DeAttach();
+        });
+        Interactible.selectExited.AddListener((a) =>
+        {
+            if (!Attached)
+            {
+                transform.SetParent(null);
+                Rigidbody.isKinematic = false;
+            }
+        });
+
+        Colliders = transform.GetComponentsInChildren<Collider>().ToList();
+        SpecialCreate();
+    }
+
+    public static void IgnoreColliders(PhisicalPcComponent p1, PhisicalPcComponent p2, bool state)
+    {
+        foreach(var cl1 in p1.Colliders)
+        {
+            foreach(var cl2 in p2.Colliders)
+            {
+                Physics.IgnoreCollision(cl1, cl2, state);
+            }
+        }
+    }
+
+    public void Attach(PhisicalPcComponent to)
+    {
+        print("Attaching component to " + to.name);
+        Rigidbody.isKinematic = true;
+        IgnoreColliders(this, to, true);
+        AttachedTo = to;
+        Attached = true;
+        SpecialAttatch();
+    }
+
+    
+
+    public void DeAttach()
+    {
+        print("Deattaching component from " + AttachedTo.name);
+        transform.SetParent(null);
+        Rigidbody.isKinematic = false;
+
+
+        IgnoreColliders(this, AttachedTo, false);
+
+        AttachedTo = null;
+        Attached = false;
+
+        OnDeAttach?.Invoke();
+        OnDeAttach = null;
+
+        SpecialDeAttatch();
+    }
+
+    public virtual void SpecialCreate() { }
+
+
+    public virtual void SpecialAttatch() { }
+    public virtual void SpecialDeAttatch() { }
+
+    public virtual bool CheckCompleteness(out string missingPart)
+    {
+        missingPart = string.Empty;
+        return true; 
+    }
+}
+
+public interface IAttachableTo
+{
+    public void AttachComponent(PhisicalPcComponent pc, Action OnDeAttach, Action SpecialBeh);
+}
+</file>
+
+<file path="Project/Assets/Scripts/ComponentUi/DetailsTab.cs">
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Transformers;
+
+public class DetailsTab : MonoBehaviour
+{
+    public VerticalLayoutGroup DetailsLayout;
+    public ComponentDetailUI OrgDetails;
+    public List<ComponentDetailUI> AllDetails = new();
+    public List<PhisicalPcComponent> AllChildrenComponents = new();
+    public PhisicalCase CurrentCase;
+    public Button B_Complete, B_Sell;
+    public Image I_Err;
+    public TMP_Text T_Err;
+    public float aboveTreshold = 2;
+
+    private void Awake()
+    {
+        B_Complete.onClick.AddListener(() => {
+            VerifyAll();
+        });
+    }
+
+    private void Update()
+    {
+        transform.LookAt(Singleton.Player.transform);
+    }
+
+    public void Create(PhisicalCase @case)
+    {
+        ResetDetails();
+        CurrentCase = @case;
+
+        PrepareSellButton(@case.Completed);
+        
+        var allComponentChildren = @case.transform.FindAllDeepChildren<PhisicalPcComponent>();
+        var grouped = FindAndGroupByType(allComponentChildren);
+
+        AllChildrenComponents = allComponentChildren;
+        AllChildrenComponents.Add(@case);
+
+        CreateDetail(new() { @case });
+        foreach(var pair in  grouped)
+        {
+            CreateDetail(pair.Value);
+        }
+
+
+        StartCoroutine(ActionAfterTime(() => {
+            DetailsLayout.enabled = false;
+            StartCoroutine(ActionAfterTime(() => { 
+                DetailsLayout.enabled = true; 
+            }, 0.1f));
+        }, 0.1f));
+        
+    }
+
+    public void CreateDetail(List<PhisicalPcComponent> ppc)
+    {
+        var newDetail = Instantiate(OrgDetails, OrgDetails.transform.parent);
+        AllDetails.Add(newDetail);
+        newDetail.gameObject.SetActive(true);
+        newDetail.Create(ppc);
+    }
+
+
+    public static Dictionary<Type, List<T>> FindAndGroupByType<T>(List<T> list)
+    {
+        var result = new Dictionary<Type, List<T>>();
+
+        foreach (var item in list)
+        {
+            var type = item.GetType();
+            if (!result.ContainsKey(type))
+                result[type] = new();
+
+            result[type].Add(item);
+        }
+
+        return result;
+    }
+
+    public void ResetDetails()
+    {
+        foreach(var item in AllDetails)
+        {
+            Destroy(item.gameObject);
+        }
+        AllDetails.Clear();
+    }
+
+    public void VerifyAll()
+    {
+
+        if(!CurrentCase.CheckCompleteness(out var caseInfo))
+        {
+            I_Err.gameObject.SetActive(true);
+            T_Err.text = caseInfo;
+            StartCoroutine(ActionAfterTime(() => {
+                I_Err.gameObject.SetActive(false);
+            }, 2));
+            return;
+        }
+        foreach (var comp in AllChildrenComponents)
+        {
+            if(!comp.CheckCompleteness(out var info))
+            {
+                I_Err.gameObject.SetActive(true);
+                T_Err.text = info;
+
+                StartCoroutine(ActionAfterTime(() => {
+                    I_Err.gameObject.SetActive(false);
+                }, 2));
+                return;
+            }
+        }
+
+        FinishBuild();
+    }
+
+    public void FinishBuild()
+    {
+        if (CurrentCase == null)
+            return;
+
+        CurrentCase.Completed = true;       
+
+        var allComponentChildren = CurrentCase.transform.FindAllDeepChildren<PhisicalPcComponent>();
+        foreach(var comp in allComponentChildren)
+        {
+            var colliders = comp.GetComponentsInChildren<Collider>();
+            var obj = comp.gameObject;
+            foreach (var c in colliders)
+            {
+                Destroy(c);
+            }
+
+            //Destroy(comp);
+            obj.GetComponent<XRGrabInteractable>().enabled = false;
+            obj.GetComponent<XRGeneralGrabTransformer>().enabled = false;
+            obj.GetComponent<Rigidbody>().isKinematic = true;
+                      
+        }
+
+        PrepareSellButton(true);
+    }
+
+    private IEnumerator ActionAfterTime(Action A, float time)
+    {
+        yield return new WaitForSeconds(time);
+        A?.Invoke();
+    }
+
+    public void PrepareSellButton(bool state)
+    {
+        if (AllChildrenComponents.Count == 0 || CurrentCase == null)
+            return;
+
+        B_Sell.gameObject.SetActive(state);
+
+        if (!state) return;
+
+        B_Sell.GetComponentInChildren<TMP_Text>().text = "Complete Quest";
+
+        B_Sell.onClick.RemoveAllListeners();
+        B_Sell.onClick.AddListener(() =>
+        {
+            if (QuestManager.Instance.TrySubmitBuild(CurrentCase, out string failReason))
+            {
+                CurrentCase.gameObject.SetActive(false);
+                gameObject.SetActive(false); // Close the UI tab
+            }
+            else
+            {
+                I_Err.gameObject.SetActive(true);
+                T_Err.text = failReason;
+                StartCoroutine(ActionAfterTime(() => {
+                    I_Err.gameObject.SetActive(false);
+                }, 3f));
+            }
+        });
+    }
+}
+</file>
+
+<file path="Project/Assets/Scripts/Singleton.cs">
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Singleton : MonoBehaviour
+{
+    public static Singleton Instance;
+
+    public ItemGrabManager itemGrabManager;
+    public static ItemGrabManager ItemGrabManager => Instance.itemGrabManager;
+
+    public ViewPcComponentUI viewPcComponentUI;
+    public static ViewPcComponentUI ViewPcComponentUI => Instance.viewPcComponentUI;
+
+    public DetailsTab detailsTab;
+    public static DetailsTab DetailsTab => Instance.detailsTab;
+
+    public GameObject player;
+    public static GameObject Player => Instance.player;
+
+    public Orders orders;
+    public static Orders Orders => Instance.orders;
+
+    public Shop shop;
+    public static Shop Shop => Instance.shop;
+
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+}
+</file>
+
+<file path="Project/Assets/Scripts/UI/Shop.cs">
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using TMPro;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class Shop : MonoBehaviour
+{
+    public PcComponentUI originalComponent;
+    public List<PcComponentUI> allComponents = new();
+    public GameObject originalPhisicalPcComponent; //Case, Cooler, Cpu, Gpu, Motherboard, Psu, Ram, Storage
+    [Header("Money")]
+    public TMP_Text T_Money;
+    public float Money = 10000;
+
+    [Header("Filters")]
+    public TMP_Dropdown D_Types;
+    public TMP_Dropdown D_Order;
+    public PriceInfo PI_Min, PI_Max;
+    public TMP_InputField In_Search;
+    public int CurrentTypeFilter = 0;
+    public string CurrentSearchFilter;
+    
+    [Header("Pagination")]
+    public Paginator P_Paginator;
+    public int PageSize = 10;
+
+    [Header("UI Logic")]
+    public ScrollRect SR_PiecesRect;
+    public GameObject T_Empty;
+
+    [Header("Orders")]
+    public Orders Orders;
+
+
+
+    private void Start()
+    {
+        print("Instantiating components");
+        foreach(var comp in Storage.Components)
+        {
+            InstantiatComponentUI(comp);
+        }
+
+        D_Types.onValueChanged.AddListener(val =>
+        {
+            CurrentTypeFilter = val;
+            FilterAll();
+        });
+
+        In_Search.onValueChanged.AddListener(val =>
+        {
+            CurrentSearchFilter = val;
+            FilterAll();
+        });
+
+        D_Order.onValueChanged.AddListener(val =>
+        {
+            Transform parent = originalComponent.transform.parent;
+
+            List<Transform> children = new();
+            foreach (Transform child in parent)
+                children.Add(child);
+
+            switch (val)
+            {
+                case 0:
+                    children = children
+                        .OrderBy(c => c.GetComponent<PcComponentUI>().thisComponent.ModelId)
+                        .ToList();
+                    break;
+
+                case 1:
+                    children = children
+                        .OrderBy(c => c.GetComponent<PcComponentUI>().thisComponent.Price)
+                        .ToList();
+                    break;
+
+                case 2:
+                    children = children
+                        .OrderByDescending(c => c.GetComponent<PcComponentUI>().thisComponent.Price)
+                        .ToList();
+                    break;
+
+                case 3:
+                    children = children
+                        .OrderBy(c => c.GetComponent<PcComponentUI>().thisComponent.Name)
+                        .ToList();
+                    break;
+            }
+
+            for (int i = 0; i < children.Count; i++)
+                children[i].SetSiblingIndex(i);
+        });
+
+        PI_Min.OnChange += (val) => { FilterAll(); };
+        PI_Max.OnChange += (val) => { FilterAll(); };
+
+        P_Paginator.OnChange += (val) => { FilterAll(); };
+
+        FilterAll();
+
+        ChangeMoney(0);
+    }
+
+    public void InstantiatComponentUI(PcComponent pc)
+    {
+        var cmp = Instantiate(originalComponent, originalComponent.transform.parent);
+        cmp.Create(this, pc);
+        cmp.gameObject.SetActive(true);
+        allComponents.Add(cmp);
+    }
+
+    public void BuyComponent(PcComponentUI pcui, PcComponent pc)
+    {
+        print($"Buying: {pc.Name}");
+        ChangeMoney(-pc.Price);
+
+        Orders.CreateOrder(pcui.thisComponent, () =>
+        {
+            GenerateNewPhisicalPcComponent(pc switch
+            {
+                Case => typeof(PhisicalCase),
+                Cooler => typeof(PhisicalCooler),
+                Cpu => typeof(PhisicalCpu),
+                Gpu => typeof(PhisicalGpu),
+                MotherBoard => typeof(PhisicalMotherBoard),
+                Psu => typeof(PhisicalPsu),
+                Ram => typeof(PhisicalRam),
+                Drive => typeof(PhisicalStorage),
+                _ => typeof(PhisicalCase)
+
+            }, pc);
+        }, 10);
+    }
+
+    public void GenerateNewPhisicalPcComponent(Type componentType, PcComponent pc)
+    {
+        var newPhisicalPcComponent = Instantiate(originalPhisicalPcComponent);
+        newPhisicalPcComponent.AddComponent(componentType);
+        newPhisicalPcComponent.GetComponent<PhisicalPcComponent>().Create(pc);
+        newPhisicalPcComponent.SetActive(true);
+    }
+
+    void FilterAll()
+    {
+        SR_PiecesRect.verticalNormalizedPosition = 1;
+        string search = CurrentSearchFilter?.Trim() ?? string.Empty;
+        float minPrice = PI_Min.Value;
+        float maxPrice = PI_Max.Value;
+
+        Type componentType = CurrentTypeFilter switch
+        {
+            1 => typeof(Case),
+            2 => typeof(Cooler),
+            3 => typeof(Cpu),
+            4 => typeof(Gpu),
+            5 => typeof(MotherBoard),
+            6 => typeof(Psu),
+            7 => typeof(Ram),
+            8 => typeof(Storage),
+            _ => typeof(PcComponent)
+        };
+
+        List<PcComponentUI> filtered = new();
+        foreach (var comp in allComponents)
+        {
+            if (MatchesAllFilters(comp, search, componentType, minPrice, maxPrice))
+                filtered.Add(comp);
+        }
+
+        int total = filtered.Count;
+
+        int pageIndex = P_Paginator.Value;
+        int pageSize = PageSize;
+
+        int start = pageIndex * pageSize;
+        int end = Mathf.Min(start + pageSize, total);
+
+        foreach (var comp in allComponents)
+            comp.gameObject.SetActive(false);
+
+        for (int i = start; i < end; i++)
+            filtered[i].gameObject.SetActive(true);
+
+        int currentOnPage = Mathf.Max(0, end - start);
+
+        P_Paginator.UpdateCounters(currentOnPage, pageSize);
+
+        T_Empty.SetActive(total == 0);
+    }
+
+    bool MatchesAllFilters(PcComponentUI comp, string search, Type componentType, float minPrice, float maxPrice)
+    {
+        var c = comp.thisComponent;
+
+        if (!componentType.IsInstanceOfType(c))
+            return false;
+
+        if (c.Price < minPrice || c.Price > maxPrice)
+            return false;
+
+        if (!string.IsNullOrEmpty(search))
+        {
+            string s = search.ToLowerInvariant();
+
+            if (!(c.Name?.ToLowerInvariant().Contains(s) == true
+                  || c.Description?.ToLowerInvariant().Contains(s) == true
+                  || c.Specs.Any(spec =>
+                         (spec.Name?.ToLowerInvariant().Contains(s) == true) ||
+                         (spec.Value?.ToLowerInvariant().Contains(s) == true))))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public void ChangeMoney(float amount)
+    {
+        Money += amount;
+        T_Money.text = "$" + Money;
+    }
+}
+</file>
+
+</files>
