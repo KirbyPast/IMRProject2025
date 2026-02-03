@@ -50,7 +50,7 @@ public class QuestDisplayUI : MonoBehaviour
         NewQuestUI.AddOrUpdateQuest(mbTrackerText, q.requiredMbName, false);
         NewQuestUI.AddOrUpdateQuest(ramTrackerText, q.requiredRamName, false);
         NewQuestUI.AddOrUpdateQuest(psuTrackerText, q.requiredPsuName, false);
-        NewQuestUI.AddOrUpdateQuest(fanTrackerText, q.requiresFans ? "Cooling Fans" : "Fans: Optional", false);
+        NewQuestUI.AddOrUpdateQuest(fanTrackerText, q.requiresFans ? "Cooling Fans" : "Fans: Optional", !q.requiresFans);
     }
 
     void UpdatePartTracking()
@@ -83,10 +83,12 @@ public class QuestDisplayUI : MonoBehaviour
             fanTrackerText.text = hasFans
                 ? "<color=green>[✔] Cooling Fans</color>"
                 : "[ ] Cooling Fans";
+            NewQuestUI.AddOrUpdateQuest(fanTrackerText, "Cooling Fans", hasFans);
         }
         else
         {
             fanTrackerText.text = "Fans: Optional";
+            NewQuestUI.AddOrUpdateQuest(fanTrackerText, "Fans: Optional", true);
         }
     }
 
