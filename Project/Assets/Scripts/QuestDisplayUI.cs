@@ -14,6 +14,9 @@ public class QuestDisplayUI : MonoBehaviour
     public TextMeshProUGUI psuTrackerText;
     public TextMeshProUGUI rewardText;
 
+    [Header("New Quest UI")]
+    public NewQuestUI NewQuestUI;
+
 
     private void Start()
     {
@@ -38,6 +41,16 @@ public class QuestDisplayUI : MonoBehaviour
         ramTrackerText.text = $"[ ] {q.requiredRamName}";
         psuTrackerText.text = $"[ ] {q.requiredPsuName}";
         fanTrackerText.text = q.requiresFans ? "[ ] Cooling Fans" : "Fans: Optional";
+
+        NewQuestUI.UpdateClient(clientText.text);
+        NewQuestUI.UpdateReward(rewardText.text);
+
+        NewQuestUI.AddOrUpdateQuest(cpuTrackerText, q.requiredCpuName, false);
+        NewQuestUI.AddOrUpdateQuest(gpuTrackerText, q.requiredGpuName, false);
+        NewQuestUI.AddOrUpdateQuest(mbTrackerText, q.requiredMbName, false);
+        NewQuestUI.AddOrUpdateQuest(ramTrackerText, q.requiredRamName, false);
+        NewQuestUI.AddOrUpdateQuest(psuTrackerText, q.requiredPsuName, false);
+        NewQuestUI.AddOrUpdateQuest(fanTrackerText, q.requiresFans ? "Cooling Fans" : "Fans: Optional", false);
     }
 
     void UpdatePartTracking()
@@ -54,6 +67,8 @@ public class QuestDisplayUI : MonoBehaviour
         {
             bool hasPart = installedParts.Any(p => p.thisComponent?.Name == partName);
             label.text = hasPart ? $"<color=green>[✔] {partName}</color>" : $"[ ] {partName}";
+
+            NewQuestUI.AddOrUpdateQuest(label, partName, hasPart);
         }
 
         UpdateStatus(cpuTrackerText, q.requiredCpuName);

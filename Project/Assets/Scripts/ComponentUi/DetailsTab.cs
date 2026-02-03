@@ -175,6 +175,7 @@ public class DetailsTab : MonoBehaviour
             {
                 CurrentCase.gameObject.SetActive(false);
                 gameObject.SetActive(false); // Close the UI tab
+                Singleton.Orders.CreateSoldOrder(AllChildrenComponents);
             }
             else
             {
