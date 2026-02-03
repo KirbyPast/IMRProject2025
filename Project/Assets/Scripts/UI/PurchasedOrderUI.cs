@@ -62,7 +62,7 @@ public class PurchasedOrderUI : MonoBehaviour
                 }
             }
         }
-
+        AudioManager.Play("DeliveryComplete");
         onDelivered.Invoke();
     }
 }
