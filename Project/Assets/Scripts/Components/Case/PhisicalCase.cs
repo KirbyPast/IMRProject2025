@@ -73,7 +73,7 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
 
         Interactible.hoverEntered.AddListener((a) =>
         {
-            Singleton.DetailsTab.gameObject.SetActive(true);
+            Singleton.DetailsTab.Activate();
             Singleton.DetailsTab.transform.position = transform.position + new Vector3(0, Singleton.DetailsTab.aboveTreshold, 0);
             Singleton.DetailsTab.Create(this);
         });
@@ -82,7 +82,7 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
         {
             try
             {
-                Singleton.DetailsTab.gameObject.SetActive(false);
+                Singleton.DetailsTab.DeActivate();
             }
             catch { }
             

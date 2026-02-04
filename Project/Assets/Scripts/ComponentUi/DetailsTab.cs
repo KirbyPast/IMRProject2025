@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Transformers;
 
+[RequireComponent(typeof(CanvasGroup))]
 public class DetailsTab : MonoBehaviour
 {
     public VerticalLayoutGroup DetailsLayout;
@@ -18,10 +20,12 @@ public class DetailsTab : MonoBehaviour
     public Button B_Complete, B_Sell;
     public Image I_Err;
     public TMP_Text T_Err;
+    private CanvasGroup cg;
     public float aboveTreshold = 2;
 
     private void Awake()
     {
+        cg = GetComponent<CanvasGroup>();
         B_Complete.onClick.AddListener(() => {
             VerifyAll();
         });
@@ -184,5 +188,18 @@ public class DetailsTab : MonoBehaviour
                 }, 3f));
             }
         });
+    }
+
+    public void Activate()
+    {
+        cg.alpha = 1.0f;
+        cg.interactable = true;
+        cg.blocksRaycasts = true;
+    }
+    public void DeActivate()
+    {
+        cg.alpha = 0f;
+        cg.interactable = false;
+        cg.blocksRaycasts = false;
     }
 }
