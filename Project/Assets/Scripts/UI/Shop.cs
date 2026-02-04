@@ -14,7 +14,7 @@ public class Shop : MonoBehaviour
     public GameObject originalPhisicalPcComponent; //Case, Cooler, Cpu, Gpu, Motherboard, Psu, Ram, Storage
     [Header("Money")]
     public TMP_Text T_Money;
-    public float Money = 10000;
+    public float Money = 5000;
 
     [Header("Filters")]
     public TMP_Dropdown D_Types;
@@ -39,6 +39,7 @@ public class Shop : MonoBehaviour
 
     private void Start()
     {
+        ChangeMoney(0);
         print("Instantiating components");
         foreach(var comp in Storage.Components)
         {
@@ -116,6 +117,10 @@ public class Shop : MonoBehaviour
 
     public void BuyComponent(PcComponentUI pcui, PcComponent pc)
     {
+        if (Money - pc.Price < 0)
+        {
+            return;
+        }
         print($"Buying: {pc.Name}");
         ChangeMoney(-pc.Price);
 

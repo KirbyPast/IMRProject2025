@@ -153,7 +153,7 @@ public class DetailsTab : MonoBehaviour
 
     private IEnumerator ActionAfterTime(Action A, float time)
     {
-        yield return new WaitForSeconds(time);
+        yield return new WaitForSecondsRealtime(time);
         A?.Invoke();
     }
 
