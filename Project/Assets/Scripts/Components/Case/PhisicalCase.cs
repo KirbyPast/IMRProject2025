@@ -24,7 +24,7 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
 
     private void Start()
     {
-        SpawnValidatorButton();
+        //SpawnValidatorButton();
         MotherboardProjection = Instantiate(MotherboardHighlight, MotherboardHighlight.transform.parent);
         MotherboardProjection.name = "MotherboardProjection";
         Singleton.ItemGrabManager.OnItemDropped += (item) =>
@@ -88,7 +88,7 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
             
         });
     }
-
+    /*
     private void SpawnValidatorButton()
     {
         if (validatorButtonPrefab == null)
@@ -107,7 +107,7 @@ public class PhisicalCase : PhisicalPcComponent, IAttachableTo
         {
             btnScript.Initialize(this);
         }
-    }
+    }*/
 
     private void Update()
     {
