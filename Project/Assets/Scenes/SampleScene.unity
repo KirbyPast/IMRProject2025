@@ -5740,7 +5740,7 @@ LineRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 907067701
-  m_SortingLayer: -1
+  m_SortingLayer: 0
   m_SortingOrder: 30001
   m_Positions:
   - {x: 0, y: 0, z: 0}
@@ -9516,7 +9516,7 @@ Transform:
   m_GameObject: {fileID: 720365263}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.72087204, z: -0, w: 0.6930682}
-  m_LocalPosition: {x: -0.36504084, y: 2.519, z: 3.98}
+  m_LocalPosition: {x: -0.36504084, y: 2.524, z: 3.98}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9600,7 +9600,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 3
   m_Height: 2
-  m_Radius: 0.5
+  m_Radius: 0.2
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
@@ -11190,7 +11190,7 @@ Transform:
   m_GameObject: {fileID: 807463769}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.0735}
+  m_LocalPosition: {x: 0, y: 1.001, z: -0.0735}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -12953,7 +12953,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6598815579406187037, guid: 18ddb545287c546e19cc77dc9fbb2189, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -16230,7 +16230,7 @@ LineRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 907067701
-  m_SortingLayer: -1
+  m_SortingLayer: 0
   m_SortingOrder: 30001
   m_Positions:
   - {x: 0, y: 0, z: 0}
