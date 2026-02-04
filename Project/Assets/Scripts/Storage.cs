@@ -338,6 +338,12 @@ public class Storage : MonoBehaviour
         ));}*/
     }
 
+    public static string GetComponentnameById(string id)
+    {
+        var comp = Components.Find(c => c.ModelId == id);
+        return comp != null ? comp.Name : id;
+    }
+
     [SerializeField]
     public List<PcComponent> ViewComponents = new();
 

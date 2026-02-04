@@ -121,7 +121,7 @@ public class DetailsTab : MonoBehaviour
             }
         }
 
-        FinishBuild();
+        PrepareSellButton(true);        
     }
 
     public void FinishBuild()
@@ -147,8 +147,6 @@ public class DetailsTab : MonoBehaviour
             obj.GetComponent<Rigidbody>().isKinematic = true;
                       
         }
-
-        PrepareSellButton(true);
     }
 
     private IEnumerator ActionAfterTime(Action A, float time)
