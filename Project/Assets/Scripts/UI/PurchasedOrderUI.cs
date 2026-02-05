@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.SceneManagement;
+//using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -62,7 +62,7 @@ public class PurchasedOrderUI : MonoBehaviour
                 }
             }
         }
-
+        AudioManager.Play("DeliveryComplete");
         onDelivered.Invoke();
     }
 }

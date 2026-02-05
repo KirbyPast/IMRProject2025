@@ -28,11 +28,13 @@ public class CaseFloatingButton : MonoBehaviour
 
             if (QuestManager.Instance.TrySubmitBuild(linkedCase, out string error))
             {
+                AudioManager.Play("BootSuccess");
                 UpdateText("Quest Complete!", Color.green);
                 // Maybe disable the PC or move it to a "Shipping" area here
             }
             else
             {
+                AudioManager.Play("BootFail");
                 UpdateText(error, Color.red);
             }
         }

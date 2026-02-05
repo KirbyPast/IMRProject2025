@@ -70,7 +70,7 @@ public class QuestManager : MonoBehaviour
             bool hasPart = installedParts.Any(p => p.thisComponent != null && p.thisComponent.ModelId == reqId);
             if (!hasPart)
             {
-                failReason = $"Missing required component ID: {reqId}";
+                failReason = $"Missing required component: {Storage.GetComponentnameById(reqId)}";
                 return false;
             }
         }

@@ -72,7 +72,10 @@ public class PhisicalPcComponent : MonoBehaviour
         {
             foreach(var cl2 in p2.Colliders)
             {
-                Physics.IgnoreCollision(cl1, cl2, state);
+                if (cl1 != null && cl2 != null)
+                { 
+                    Physics.IgnoreCollision(cl1, cl2, state); 
+                }
             }
         }
     }
@@ -85,6 +88,7 @@ public class PhisicalPcComponent : MonoBehaviour
         AttachedTo = to;
         Attached = true;
         SpecialAttatch();
+        AudioManager.Play("Click");
     }
 
     

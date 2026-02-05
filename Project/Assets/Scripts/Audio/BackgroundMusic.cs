@@ -70,6 +70,7 @@ public class BackgroundMusic : MonoBehaviour
             return;
         }
 
+        currentSource.volume = 0.1f;
         currentSource.Play();
         currentTrackIndex = (currentTrackIndex + 1) % musicTrackNames.Length;
     }

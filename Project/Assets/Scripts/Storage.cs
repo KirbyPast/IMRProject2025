@@ -73,16 +73,19 @@ public class Storage : MonoBehaviour
         ));
 
         Components.Add(new Case(
-            Id: "5",
-            Name: "case",
-            Description: "case",
-            Manufacturer: "case",
-            Model: "case",
-            Price: 139.99f,
-            Specs: new List<Spec> {
-                new ("case", "case")
-            }
-        ));
+           Id: "5",
+           Name: "Obsidian Flow 500",
+           Description: "High-airflow mid-tower chassis with tempered glass panels and integrated cable management.",
+           Manufacturer: "Lumina Tech",
+           Model: "OB-500-BK",
+           Price: 139.99f,
+           Specs: new List<Spec> {
+        new ("Form Factor", "ATX, Micro-ATX, Mini-ITX"),
+        new ("Color", "Matte Black"),
+        new ("Max GPU Length", "410mm"),
+        new ("Side Panel", "Tempered Glass")
+           }
+       ));
 
         Components.Add(new Psu(
             Id: "6",
@@ -333,6 +336,12 @@ public class Storage : MonoBehaviour
                 new Spec("case", "case"),
 
         ));}*/
+    }
+
+    public static string GetComponentnameById(string id)
+    {
+        var comp = Components.Find(c => c.ModelId == id);
+        return comp != null ? comp.Name : id;
     }
 
     [SerializeField]

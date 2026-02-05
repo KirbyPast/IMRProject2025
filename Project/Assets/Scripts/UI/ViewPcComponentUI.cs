@@ -21,7 +21,8 @@ public class ViewPcComponentUI : MonoBehaviour
 
         B_Buy.onClick.RemoveAllListeners();
         B_Buy.onClick = pcui.B_Buy.onClick;
-        B_Buy.onClick.AddListener(delegate {           
+        B_Buy.onClick.AddListener(delegate {
+            AudioManager.Play("buy"); 
             gameObject.SetActive(false);
         });
 
